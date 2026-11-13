@@ -20,7 +20,7 @@ namespace EU2.Map.Drawing
 				if ( r >= 256 ) rangecheck[r] = 127;
 				else if ( r >= 132 ) rangecheck[r] = (byte)(r-128);
 				else rangecheck[r] = 4;
-			}		
+			}
 		}
 
 		public int[] Shade32( RawImage image ) {
@@ -32,7 +32,7 @@ namespace EU2.Map.Drawing
 
 			for ( int y=0; y<height; ++y ) {
 				for ( int x=0; x<width; ++x ) {
-					ushort owner = memory[x,y].IsBorder() && drawborders ? Province.BorderID : memory[x,y].ID;
+					ushort owner = memory[x,y].IsBorder() && drawborders ? provinces.Profile.BorderID : memory[x,y].ID;
 					buffer[bufidx++] = shades[((rangecheck[(memory[x,y].Color-0+128+32)]<<6) | (int)(provinces[owner].Terrain.Color) )];
 				}
 			}
@@ -49,7 +49,7 @@ namespace EU2.Map.Drawing
 
 			for ( int y=0; y<height; ++y ) {
 				for ( int x=0; x<width; ++x ) {
-					ushort owner = memory[x,y].IsBorder() && drawborders ? Province.BorderID : memory[x,y].ID;
+					ushort owner = memory[x,y].IsBorder() && drawborders ? provinces.Profile.BorderID : memory[x,y].ID;
 					int color32 = shades[((rangecheck[(memory[x,y].Color-0+128+32)]<<6) | (int)(provinces[owner].Terrain.Color) )];
 					buffer[bufidx++] = (short)((((color32 >> 19) & 31) << 10) | (((color32 >> 11) & 31) << 5) | (((color32 >> 3) & 31)));
 				}

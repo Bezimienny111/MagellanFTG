@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Recovered from Magellan 2.4.0 "Marianas-rc1" binaries. Project GUID matches the original. -->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B0AE6803-6A6F-43C9-9604-198E1414506C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>EU2.Edit</RootNamespace>
+    <AssemblyName>EU2Edit</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EU2Proxy.cs" />
+    <Compile Include="FtgSupport.cs" />
+    <Compile Include="File.cs" />
+    <Compile Include="FileExtractOptions.cs" />
+    <Compile Include="FileProcessingAction.cs" />
+    <Compile Include="FileProcessingEventArgs.cs" />
+    <Compile Include="FileProcessingHandler.cs" />
+    <Compile Include="IFile.cs" />
+    <Compile Include="InjectParams.cs" />
+    <Compile Include="InvalidFileFormatException.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EU2\EU2Data.csproj">
+      <Project>{36168C30-E146-42C6-8874-9D04A7457DCC}</Project>
+      <Name>EU2Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpZipLib\ICSharpCode.SharpZipLib.csproj">
+      <Project>{50DE201F-74CE-5C6A-B8E1-297DA7B27AE3}</Project>
+      <Name>ICSharpCode.SharpZipLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup><EmbeddedResource Include="Resources\default-colorscales.csv"><LogicalName>EU2.Edit.DefaultColorScales</LogicalName></EmbeddedResource></ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

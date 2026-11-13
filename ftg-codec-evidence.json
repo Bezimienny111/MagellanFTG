@@ -1,0 +1,144 @@
+{
+  "target": {
+    "path": "D:\\Steam\\steamapps\\common\\For The Glory\\FTG.exe",
+    "sha256": "4ddc08b92e21b53fdf4f96375417ef5f95785092554c2ec96cb1555480429fa1",
+    "architecture": "x86",
+    "provider": "Ghidra 12.1.4",
+    "method": "Static inspection through REA; game was not executed; no binary bytes modified."
+  },
+  "scope": "FTG lightmap owner-token compatibility above the legacy Magellan province limit.",
+  "engine_limits": {
+    "define": "_MAP_MAX_PROVINCES_",
+    "source": "D:\\Steam\\steamapps\\common\\For The Glory\\Db\\defines.txt:336",
+    "comment": "maximum number of provinces in the current map. Cannot exceed 10000 and must be equal to the number of provinces in adjacent.tbl.",
+    "meaning": "Allocation/table capacity, not the lightmap border-discrimination threshold.",
+    "adjacent_tbl": "FUN_00525cc0, VA 0x525cc0, reads (configured capacity+1) 32-bit offsets and then 12-byte adjacency records.",
+    "province_parser": "FUN_00525340, VA 0x525340, accepts IDs <0x2711 (0..10000) and records maximum seen ID. Allocation capacity still must cover the definitions.",
+    "operational_cap": "Use capacity <=10000 and real IDs below that capacity; the parser accepting ID10000 does not prove capacity10000 safely allocates that ID as a normal province."
+  },
+  "legacy_decoder": {
+    "procedure": "FUN_00520260",
+    "address": "0x520260",
+    "evidence_id": "ev_ae9fcd25c872ac4f98ed925d1185e44419668ed11410a9a95ec18ec8d2e4fa2c",
+    "profile": "DAT_00892ab4 == 0",
+    "offset_table_entry_bytes": 3,
+    "token_bits": 15,
+    "id_table_terminator": "High bit of high byte (0x8000). It is stripped with &0x7f before building the 15-bit token.",
+    "threshold_variable": "DAT_006c40f8",
+    "threshold_source": "Max ID explicitly parsed from provinces.txt, plus 1. FUN_00525340 updates max; FUN_00525580 (VA 0x525580) increments it after parsing.",
+    "threshold_evidence_ids": [
+      "ev_d0b25c4542cb26e6cdbb79b66eda510654a09d855ba41bf339343b716d6d27b7",
+      "ev_50c40b154bb87b360c4a42d9272228db026b5e515a236437ad1d102ca49f7083"
+    ],
+    "normal_id_condition": "token < MaxDefinedID+1",
+    "border_condition": "token >= MaxDefinedID+1",
+    "observed_border_condition_pseudocode": "if ((threshold <= token) && ((token <= threshold + 3) || (threshold < token))) { ... }",
+    "border_condition_simplification": "For nonnegative 15-bit tokens and a nonnegative count, the observed conjunction is exactly token >= threshold.",
+    "owner_index": "((token >> 9) & 0x3f) - 4",
+    "neighbor_adjacency_index": "(token >> 1) & 0xf",
+    "river_adjacency_index": "(token >> 5) & 0xf; 0xf means no river",
+    "border_color_bit": "token & 1",
+    "river_lookup": "When river index !=15, actual river ID is adjacency[normalAdjacentCount + riverIndex].",
+    "normal_adjacent_count": "The loader FUN_00525cc0 counts entries until the first target province whose terrain type is river (terrain.type==2). This is unrelated to the adjacency-record type 1, which can mark a normal land neighbor separated by a river.",
+    "raw_table_preservation": "The decoder appends every token to a physical array, then loops over every physical table entry. It does not deduplicate normal ID values.",
+    "duplicate_zero_legal": "Repeated raw0 entries remain zero because 0 < threshold for any nonempty map. Ownership data uses physical owner-table indices. Therefore unused leading raw0 entries are valid according to the observed decoder. This is a static derivation, not a game-runtime observation."
+  },
+  "padding_compatibility": {
+    "status": "Derived from observed decoder; requires integration tests and game-runtime validation before claiming actual game operation.",
+    "keep_plus_four": true,
+    "formula": "padding = max(0, ceil(threshold / 512) - 4), with threshold = MaxDefinedID + 1",
+    "implementation": "Prepend exactly padding physical raw0 entries to the serialized owner table. Keep the ID0 dictionary entry at physical index0. Start inserting nonzero real owner IDs at physical index padding. Encode border tokens with the original (physicalOwnerIndex+4)<<9 formula.",
+    "zero_padding_note": "If padding==0, use ordinary insertion behavior. If padding>0, duplicates in the physical table are intentional; dictionary deduplication must not collapse them.",
+    "threshold_examples": [
+      {
+        "threshold": 2020,
+        "padding": 0,
+        "first_possible_border_token": 2048
+      },
+      {
+        "threshold": 2048,
+        "padding": 0,
+        "first_possible_border_token": 2048
+      },
+      {
+        "threshold": 2049,
+        "padding": 1,
+        "first_possible_border_token": 2560
+      },
+      {
+        "threshold": 5001,
+        "padding": 6,
+        "first_possible_border_token": 5120
+      },
+      {
+        "threshold": 10000,
+        "padding": 16,
+        "first_possible_border_token": 10240
+      }
+    ],
+    "index_limits": "Physical owner index used by a border must satisfy physicalIndex+4<64, so physicalIndex<=59. At threshold10000/padding16, at most44 distinct nonzero border-owner slots fit before index60. The overall owner table can still have at most256 physical entries. Reject overflow explicitly.",
+    "token_collision_proof": "For every border owner i>=padding, token >= (i+4)*512 >= threshold, so it cannot be misclassified as a normal province. Normal rawIDs are <threshold and remain normal. Decoding the token returns the same physical i because ((token>>9)&63)-4=i.",
+    "river_limit": "river relative adjacency index must be0..14; 15 is reserved for no river. Neighbor adjacency index remains0..15.",
+    "internal_id_width": "Pixel.ID and Pixel.RiverID must support IDs above4095 without truncation (the original packed uint gives each only12 bits). This is separate from the on-disk15-bit token limit."
+  },
+  "alternate_format": {
+    "status": "Observed in binary, activation not established.",
+    "flag": "DAT_00892ab4 !=0",
+    "differences": {
+      "lightmap_offset_bytes": 4,
+      "owner_index": "((token>>8)&63)-4",
+      "adjacency_index": "(token>>1)&15",
+      "river_index": "No separate river index in the inspected branch.",
+      "idgrid_bytes": 81920,
+      "legacy_idgrid_bytes": 40960
+    },
+    "references": [
+      "FUN_00520260 (0x520260)",
+      "FUN_0051ffd0 (0x51ffd0)",
+      "FUN_00520190 (0x520190)"
+    ],
+    "evidence_ids": [
+      "ev_ae9fcd25c872ac4f98ed925d1185e44419668ed11410a9a95ec18ec8d2e4fa2c",
+      "ev_9a4b60a4e043d2b12bd8b011240e433130e5265c1c72748dd09f0e5f1c5dbe82",
+      "ev_36c95c852bdcf94ec3a2546fc6f401cfbbdc0318ee94bbf5e451cfed4f52b673"
+    ],
+    "activation_search": "All Ghidra direct xrefs to0x892ab4 inspected. The only observed direct write initializes it to0 inFUN_00519510. No configuration setting or write1 was found in those direct references. Indirect pointer writes are not ruled out.",
+    "recommendation": "Do not emit alternate-format files merely because capacity exceeds2020. Padding allows the inspected legacy decoder to distinguish high normal IDs from border tokens without assuming alternate-format activation."
+  },
+  "watk4_observation": {
+    "map": "D:\\Steam\\steamapps\\common\\For The Glory\\Mods\\Gloriana_WatK4\\Map",
+    "adjacent_tbl_bytes": 165488,
+    "offset_count": 2021,
+    "adjacency_records": 13117,
+    "size_check": "2021*4+13117*12 ==165488",
+    "province27_adjacencies": [
+      [
+        26,
+        0
+      ],
+      [
+        28,
+        1
+      ],
+      [
+        1772,
+        0
+      ],
+      [
+        1773,
+        0
+      ],
+      [
+        2006,
+        0
+      ]
+    ],
+    "river_caution": "If2006 is classified as river (verify parsed terrains), relative river index0 must map to the trailing river entry2006, not the first adjacency26."
+  },
+  "limitations": [
+    "No FTG process was launched.",
+    "No >2020-province native FTG map was supplied or run.",
+    "Padding legality is established by static decoder logic, not by successful rendered gameplay.",
+    "Ghidra default auto-analysis and decompilation may contain type-recovery inaccuracies; exact mask/shift/constants are observed in the analyzed function."
+  ]
+}

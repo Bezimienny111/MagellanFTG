@@ -1,0 +1,369 @@
+{
+  "upstream": "https://github.com/Inferis/Magellan.git",
+  "commit": "f0abbda480906658fad0073d337c2dfe8dea5422",
+  "recovered_sources": "V:\\Magellan",
+  "source_claim": "Existing local tree identifies itself as decompiled Magellan 2.4.0. No original binary available here to verify provenance or equivalence.",
+  "integration": "Recovered missing libraries adapted to the upstream fixed-size core; proprietary Explorer chrome replaced by standard WinForms.",
+  "files": [
+    {
+      "path": "EU2Edit/EU2Edit.csproj",
+      "source_sha256": "5e3a7dcd490aa53df196f239a2b7980843421bd8866a01820ffa27d310c4dd31"
+    },
+    {
+      "path": "EU2Edit/EU2Proxy.cs",
+      "source_sha256": "3b3ea67652ca9c1ecf7dd34560c4fcec14c2bf3a5f9003865b6db306b21d8faf"
+    },
+    {
+      "path": "EU2Edit/File.cs",
+      "source_sha256": "090b1f15edc295d2c6bda6ac6a1e22ea9ad07d66650d1a6a23f2f1597688c368"
+    },
+    {
+      "path": "EU2Edit/FileExtractOptions.cs",
+      "source_sha256": "c4a8519ee9bc61f6f4f156a0c3b7fe8be221017ad7cac5f0ff5626885e16f3a0"
+    },
+    {
+      "path": "EU2Edit/FileProcessingAction.cs",
+      "source_sha256": "92bca2a0083f2920dd020c7efa6f94c2f50f5d308c29ad5024afb6f2a76e7e7b"
+    },
+    {
+      "path": "EU2Edit/FileProcessingEventArgs.cs",
+      "source_sha256": "7cc2c05df07a17b0f2bd6dc412fdce1fe11eb4f41875d3a7ef119a094f3bb5fc"
+    },
+    {
+      "path": "EU2Edit/FileProcessingHandler.cs",
+      "source_sha256": "f4bbaecee98dc5f8ed841adfc5dc108866850d4c6637456d597bd8d6a8e786f3"
+    },
+    {
+      "path": "EU2Edit/IFile.cs",
+      "source_sha256": "709093a326b9352d8db983efcfd45264118c31739a1a05bda5041e9a0ee014f9"
+    },
+    {
+      "path": "EU2Edit/InjectParams.cs",
+      "source_sha256": "f502f04f9518cf0241ed3823f47f8078d552dbdbf5e0f22a0c4d218dd4aa996e"
+    },
+    {
+      "path": "EU2Edit/InvalidFileFormatException.cs",
+      "source_sha256": "557e3d834b334425be9fe2182447f2db602f1cd5b5f96ebbbca922514eef6cae"
+    },
+    {
+      "path": "EU2Edit/Properties/AssemblyInfo.cs",
+      "source_sha256": "d18b7292b4b40efd3490d11dd072caefae37cad60cc14bfff37c5ad720e05b7f"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/ColorDetail.cs",
+      "source_sha256": "dd436453edc4580a23bbc16785c5501213e30c375ef56cf82ab5f1a5a47868a3"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/ColoredShaderProxy.cs",
+      "source_sha256": "ae4b6346e5ac3e8a5a4f52be91a6d8b536e28186d7463e48d1bf5e6a8a27f514"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/ContextMenuEventArgs.cs",
+      "source_sha256": "977afb1d3e70b056f8c1bba9a74f41a261e7fae656d0cde1a3365f9049f712be"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/EU2MapEditorControls.csproj",
+      "source_sha256": "177f357b1bc6168d42368ddb2ca9ac34b349ddaa20c8d2fbe9f427a6a2d4ad29"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/LayerActionEventArgs.cs",
+      "source_sha256": "6e578b948e742a0ffa5d8ae41659272f9e2644415590789579a008a128b23f13"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/LayeredMapView.bmp",
+      "source_sha256": "a6c60daba3d8bd2e58afad8d952ba7cb8d762afeae1f9b1d04456ca54eac45bf"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/LayeredMapView.cs",
+      "source_sha256": "69c1b9cd496e0b9f45caaca8522a7e75a2a4601facf6dbcbbf72f5b2c7abe467"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/LayeredMapView.resx",
+      "source_sha256": "06cb0cd22ba75f48866e05fe3ab38d3695be80b74ac32cd103dccf78edce5fc2"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/LayerPainterCollection.cs",
+      "source_sha256": "f3bfb22f07600f9090f12e301ba36fa5674c120b8adbf87daf49de14b1687c98"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/MapGridMode.cs",
+      "source_sha256": "cca6cf3d71875b1ea96b0001db199c9cab8d858a54da745e7e4c26d1ff2ae732"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/MapView.cs",
+      "source_sha256": "3fa751273e9da47bf688f36c5786fe65155b668b7c7b4855d46a5840550839d9"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/MapView.resx",
+      "source_sha256": "990f39f7353228d0a19783d3db098f119e6e78c13bb819425717cfad66c0634d"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/RegionDrawMode.cs",
+      "source_sha256": "ff2275ed63854e2df805c043bef2d02d4ca9c7babf2e12f41d6bdc1dd095ace6"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/TrackerMovedEventArgs.cs",
+      "source_sha256": "cb6e5ada59e63574db1fbc0f0d94ecf041798a7dea283d06ad596a4f0e5a3d12"
+    },
+    {
+      "path": "EU2MapCodecDev/EU2MapEditorControls/Properties/AssemblyInfo.cs",
+      "source_sha256": "201a0c11314d835ca1c3d9bca161de44d38bfdc6dc5577cbb468bed5a5105938"
+    },
+    {
+      "path": "SharpZipLib/ICSharpCode.SharpZipLib.csproj",
+      "source_sha256": "8ba67ad4c1b4353bf3c79044689380b6a2b16e5addc8ba76a22ffe246b4458a6"
+    },
+    {
+      "path": "SharpZipLib/ZipException.cs",
+      "source_sha256": "b93b8759388e20741cf7dc2a79c8d1c766a688e53fd126cb80715d00fba64985"
+    },
+    {
+      "path": "SharpZipLib/BZip2/BZip2.cs",
+      "source_sha256": "de9bbd43415ceb4cb614074592eeb3d4e55ee6d813a8897fc6784d7d18fa3747"
+    },
+    {
+      "path": "SharpZipLib/BZip2/BZip2Constants.cs",
+      "source_sha256": "e4a1726c256fb8963168c2973dfe6b3a6af40c1ce351496fdd83cd4bf9a236ec"
+    },
+    {
+      "path": "SharpZipLib/BZip2/BZip2InputStream.cs",
+      "source_sha256": "78a2b8a5e0c6ce2ea622417970cb7ed7c917ae951754196418a1c4519cf46d9e"
+    },
+    {
+      "path": "SharpZipLib/BZip2/BZip2OutputStream.cs",
+      "source_sha256": "100477a59f126e71dfab65595ae6b485dd524c4a6e743f113497a022e84adf6d"
+    },
+    {
+      "path": "SharpZipLib/Checksums/Adler32.cs",
+      "source_sha256": "59af9f617f8f22bf9c436708a039eaa18d97ae7d0ce8d0ebe772263db9ecb483"
+    },
+    {
+      "path": "SharpZipLib/Checksums/Crc32.cs",
+      "source_sha256": "06979b565ef46321d6224b5634853aba90d7b4e522e46dcb1c68a0bba1e118d2"
+    },
+    {
+      "path": "SharpZipLib/Checksums/IChecksum.cs",
+      "source_sha256": "75786beb3c07bef84e2510978a62725d373592e3c87707ca50c6e90dc231e297"
+    },
+    {
+      "path": "SharpZipLib/Checksums/StrangeCRC.cs",
+      "source_sha256": "9d34c46205efbe09f37cf5fe0b296571cae0574cb9fb6945c0c148895ca74ccb"
+    },
+    {
+      "path": "SharpZipLib/GZip/GZipConstants.cs",
+      "source_sha256": "6d7c0b3eebb50815009d072de8deccad3ae113961582823482cf7fdc981f6f3e"
+    },
+    {
+      "path": "SharpZipLib/GZip/GZipInputStream.cs",
+      "source_sha256": "fed21ab28f490ef629f458613bd770a2c618a2f4866dcbcb922b422af06e5255"
+    },
+    {
+      "path": "SharpZipLib/GZip/GZipOutputStream.cs",
+      "source_sha256": "5ee4e573ef48ffc1fbc5683d17a9e0884b4f9005572db2d2aa956c709ead1a18"
+    },
+    {
+      "path": "SharpZipLib/Properties/AssemblyInfo.cs",
+      "source_sha256": "9ac950f67d818172dfa31e4a8149857fa322f02a27d808b90186670278c41d79"
+    },
+    {
+      "path": "SharpZipLib/Tar/InvalidHeaderException.cs",
+      "source_sha256": "16e4367838931d2845f3f53b0cbda0de7f91f5d686c8ea0134fbee4eea449096"
+    },
+    {
+      "path": "SharpZipLib/Tar/ProgressMessageHandler.cs",
+      "source_sha256": "a8f265604a5b9b68c778ed7c8735674398a1b8146ee802604210a27ec05df595"
+    },
+    {
+      "path": "SharpZipLib/Tar/TarArchive.cs",
+      "source_sha256": "168320cbeaf4003638f26279518852ac76e9c03dbc315e5ca9ee260cc4dd6106"
+    },
+    {
+      "path": "SharpZipLib/Tar/TarBuffer.cs",
+      "source_sha256": "48b94cd2fa28c0e649d05e2c51c019ddc1741c749954bb03e068a0786ecdf868"
+    },
+    {
+      "path": "SharpZipLib/Tar/TarEntry.cs",
+      "source_sha256": "b9da24809d12a86f2136e04084bc7df2ba565b23a52327a6c63c27346fb6f1cd"
+    },
+    {
+      "path": "SharpZipLib/Tar/TarHeader.cs",
+      "source_sha256": "371f4052071851254a548d9227fb8d6cf8faab0faef05da354d0f99701a87f8f"
+    },
+    {
+      "path": "SharpZipLib/Tar/TarInputStream.cs",
+      "source_sha256": "e2fb476287590b5a32f3229d9d42f949db48901ac58ce414c0dab704a7d84dbb"
+    },
+    {
+      "path": "SharpZipLib/Tar/TarOutputStream.cs",
+      "source_sha256": "0288a214a57ffb84b6b516217545052502c9d38bf33d2b5b1af2d9db8dadf729"
+    },
+    {
+      "path": "SharpZipLib/Zip/CompressionMethod.cs",
+      "source_sha256": "228f27410703f9593b72aa36f6f260c8de2d1fec7989f01086dc577db309a163"
+    },
+    {
+      "path": "SharpZipLib/Zip/ZipConstants.cs",
+      "source_sha256": "28bd3ced3dc32721d42f622bca6724caf6d2931b5298c65c65d2a8e8ac3c31c5"
+    },
+    {
+      "path": "SharpZipLib/Zip/ZipEntry.cs",
+      "source_sha256": "458d07c1f6f16f4d9a583542baee861be86c9acb2e2518c01c82b7a98dc34d81"
+    },
+    {
+      "path": "SharpZipLib/Zip/ZipFile.cs",
+      "source_sha256": "28c67b29617a312c0e7897acdd3dad13e972810879669b98a6ad2815c9cde06d"
+    },
+    {
+      "path": "SharpZipLib/Zip/ZipInputStream.cs",
+      "source_sha256": "06a90401e6d923595233edcb508942bcbe8a3d9a14439bccb4571f6e26e3dcdc"
+    },
+    {
+      "path": "SharpZipLib/Zip/ZipOutputStream.cs",
+      "source_sha256": "a16d9be3b41f29205766dfae340222d627e0958b3ddd1282c31b0a089fb02ccf"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/Deflater.cs",
+      "source_sha256": "5a7a2df6d816c1645adbfe43c9ef0dfa41bf2efb1b6b27b17ab3c3d418b4b91c"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/DeflaterConstants.cs",
+      "source_sha256": "44639237c2fb48ed0a36e82a3a08b623361f279d4d523aec042757d2927721ea"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/DeflaterEngine.cs",
+      "source_sha256": "1a734e28bd6cfd82b55735e08edeb3b34eeba03588ed4fc6831730eb8d9e6111"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/DeflaterHuffman.cs",
+      "source_sha256": "a395de2a0a9cdc50be127e3b517d1ad9d23982c581fbcc30b0c7fe9ac6777d86"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/DeflaterPending.cs",
+      "source_sha256": "098dde95784ca42b20b190a0e56570d25f5b3096ea3a7b1a9ecfd148f663f577"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/DeflateStrategy.cs",
+      "source_sha256": "3f41dad8ed6d3141db8f441bd1d9c9ed0fc0017555d891e18f0109af22af0f4c"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/Inflater.cs",
+      "source_sha256": "927aef73b0c1d8b9a14e09296312062c9050aa567e6a7b0fb4855ae953d60c21"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/InflaterDynHeader.cs",
+      "source_sha256": "2af035e24c401d86f1b2bcc077fb3191fe6dc647a1ebab3f611bcee20c5e18fa"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/InflaterHuffmanTree.cs",
+      "source_sha256": "f3c703f306a97417f879b9c0a888b1bbfab401bfaa071ace36cb786d9c20a5aa"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/PendingBuffer.cs",
+      "source_sha256": "512371b4f51769c4da85a685a8f0377352fe3227d91e9c9600775ce70e9b7047"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/Streams/DeflaterOutputStream.cs",
+      "source_sha256": "10358722b70065966a13b9089e05f878519ad02d8e0b0dfdd809e7da938b8858"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/Streams/InflaterInputStream.cs",
+      "source_sha256": "e10dbdbc488192ec96c1bfa081a81d34ce7bd69951e591a57e1f8523a96acc44"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/Streams/OutputWindow.cs",
+      "source_sha256": "e54d5d09029f5a0e524d5748fc71c65a16f1d01369dbe511bad7cae6d7e802e3"
+    },
+    {
+      "path": "SharpZipLib/Zip/Compression/Streams/StreamManipulator.cs",
+      "source_sha256": "d618fc28fef2dcd9c11eadd2a8582fb3723727ebbbdb814dd2dbd424dc762189"
+    },
+    {
+      "path": "EU2/Map/MapSize.cs",
+      "source_sha256": "aa97095a831955285c9115955e1c730522d026bbac1c13688686f8c33795b972"
+    },
+    {
+      "path": "Maptools/LayerPainterLib/DefaultShaderProxy.cs",
+      "source_sha256": "fc8c067c03af6eb6f47420ffd412ac10f16edc9b6d80c4803b21ec54a998c43e"
+    }
+  ],
+  "final_status": {
+    "ftg_provinces_txt": true,
+    "ftg_export_province_limit": 10000,
+    "release_integration_checks_passed": 20,
+    "test_run": "20261113-172305-40dce5",
+    "in_game_test_performed": false,
+    "upstream_preserved_in_git": true
+  },
+  "final_sha256": {
+    "EU2Edit/EU2Edit.csproj": "f45d0b0ad4f883fa428c2c7c14ce410114fa0eccf9ae1535c1dba9db00295306",
+    "EU2Edit/EU2Proxy.cs": "51d0cbc11bb91f58ff69fbe4ada818d439b7ff1a62fc9217a7383bef79b36379",
+    "EU2Edit/File.cs": "5bc5199906b160e4d33eaf40728a10e4060cf25af1643ea361b579065abcab23",
+    "EU2Edit/FileExtractOptions.cs": "c4a8519ee9bc61f6f4f156a0c3b7fe8be221017ad7cac5f0ff5626885e16f3a0",
+    "EU2Edit/FileProcessingAction.cs": "92bca2a0083f2920dd020c7efa6f94c2f50f5d308c29ad5024afb6f2a76e7e7b",
+    "EU2Edit/FileProcessingEventArgs.cs": "7cc2c05df07a17b0f2bd6dc412fdce1fe11eb4f41875d3a7ef119a094f3bb5fc",
+    "EU2Edit/FileProcessingHandler.cs": "f4bbaecee98dc5f8ed841adfc5dc108866850d4c6637456d597bd8d6a8e786f3",
+    "EU2Edit/IFile.cs": "709093a326b9352d8db983efcfd45264118c31739a1a05bda5041e9a0ee014f9",
+    "EU2Edit/InjectParams.cs": "f502f04f9518cf0241ed3823f47f8078d552dbdbf5e0f22a0c4d218dd4aa996e",
+    "EU2Edit/InvalidFileFormatException.cs": "557e3d834b334425be9fe2182447f2db602f1cd5b5f96ebbbca922514eef6cae",
+    "EU2Edit/Properties/AssemblyInfo.cs": "d18b7292b4b40efd3490d11dd072caefae37cad60cc14bfff37c5ad720e05b7f",
+    "EU2MapCodecDev/EU2MapEditorControls/ColorDetail.cs": "dd436453edc4580a23bbc16785c5501213e30c375ef56cf82ab5f1a5a47868a3",
+    "EU2MapCodecDev/EU2MapEditorControls/ColoredShaderProxy.cs": "ae4b6346e5ac3e8a5a4f52be91a6d8b536e28186d7463e48d1bf5e6a8a27f514",
+    "EU2MapCodecDev/EU2MapEditorControls/ContextMenuEventArgs.cs": "977afb1d3e70b056f8c1bba9a74f41a261e7fae656d0cde1a3365f9049f712be",
+    "EU2MapCodecDev/EU2MapEditorControls/EU2MapEditorControls.csproj": "95bbd66251b5e034abc99c2356d327a5299d9916427efa5ca63bd3c04d760608",
+    "EU2MapCodecDev/EU2MapEditorControls/LayerActionEventArgs.cs": "6e578b948e742a0ffa5d8ae41659272f9e2644415590789579a008a128b23f13",
+    "EU2MapCodecDev/EU2MapEditorControls/LayeredMapView.bmp": "a6c60daba3d8bd2e58afad8d952ba7cb8d762afeae1f9b1d04456ca54eac45bf",
+    "EU2MapCodecDev/EU2MapEditorControls/LayeredMapView.cs": "b435d475fe3fd906768b1dcfe6e658639fd5cfa021acea162df0da178ad0fd61",
+    "EU2MapCodecDev/EU2MapEditorControls/LayeredMapView.resx": "06cb0cd22ba75f48866e05fe3ab38d3695be80b74ac32cd103dccf78edce5fc2",
+    "EU2MapCodecDev/EU2MapEditorControls/LayerPainterCollection.cs": "f3bfb22f07600f9090f12e301ba36fa5674c120b8adbf87daf49de14b1687c98",
+    "EU2MapCodecDev/EU2MapEditorControls/MapGridMode.cs": "cca6cf3d71875b1ea96b0001db199c9cab8d858a54da745e7e4c26d1ff2ae732",
+    "EU2MapCodecDev/EU2MapEditorControls/MapView.cs": "afb90e6d50493871780176e120d6ae02c1ab45dd6cfe25741242024ac0a60da0",
+    "EU2MapCodecDev/EU2MapEditorControls/MapView.resx": "990f39f7353228d0a19783d3db098f119e6e78c13bb819425717cfad66c0634d",
+    "EU2MapCodecDev/EU2MapEditorControls/RegionDrawMode.cs": "ff2275ed63854e2df805c043bef2d02d4ca9c7babf2e12f41d6bdc1dd095ace6",
+    "EU2MapCodecDev/EU2MapEditorControls/TrackerMovedEventArgs.cs": "cb6e5ada59e63574db1fbc0f0d94ecf041798a7dea283d06ad596a4f0e5a3d12",
+    "EU2MapCodecDev/EU2MapEditorControls/Properties/AssemblyInfo.cs": "201a0c11314d835ca1c3d9bca161de44d38bfdc6dc5577cbb468bed5a5105938",
+    "SharpZipLib/ICSharpCode.SharpZipLib.csproj": "e3785dc82c319e655df8688c02446a2c454ac2f301ac558f4f98cf96e5f0aa1d",
+    "SharpZipLib/ZipException.cs": "b93b8759388e20741cf7dc2a79c8d1c766a688e53fd126cb80715d00fba64985",
+    "SharpZipLib/BZip2/BZip2.cs": "de9bbd43415ceb4cb614074592eeb3d4e55ee6d813a8897fc6784d7d18fa3747",
+    "SharpZipLib/BZip2/BZip2Constants.cs": "e4a1726c256fb8963168c2973dfe6b3a6af40c1ce351496fdd83cd4bf9a236ec",
+    "SharpZipLib/BZip2/BZip2InputStream.cs": "78a2b8a5e0c6ce2ea622417970cb7ed7c917ae951754196418a1c4519cf46d9e",
+    "SharpZipLib/BZip2/BZip2OutputStream.cs": "100477a59f126e71dfab65595ae6b485dd524c4a6e743f113497a022e84adf6d",
+    "SharpZipLib/Checksums/Adler32.cs": "59af9f617f8f22bf9c436708a039eaa18d97ae7d0ce8d0ebe772263db9ecb483",
+    "SharpZipLib/Checksums/Crc32.cs": "06979b565ef46321d6224b5634853aba90d7b4e522e46dcb1c68a0bba1e118d2",
+    "SharpZipLib/Checksums/IChecksum.cs": "75786beb3c07bef84e2510978a62725d373592e3c87707ca50c6e90dc231e297",
+    "SharpZipLib/Checksums/StrangeCRC.cs": "9d34c46205efbe09f37cf5fe0b296571cae0574cb9fb6945c0c148895ca74ccb",
+    "SharpZipLib/GZip/GZipConstants.cs": "6d7c0b3eebb50815009d072de8deccad3ae113961582823482cf7fdc981f6f3e",
+    "SharpZipLib/GZip/GZipInputStream.cs": "fed21ab28f490ef629f458613bd770a2c618a2f4866dcbcb922b422af06e5255",
+    "SharpZipLib/GZip/GZipOutputStream.cs": "5ee4e573ef48ffc1fbc5683d17a9e0884b4f9005572db2d2aa956c709ead1a18",
+    "SharpZipLib/Properties/AssemblyInfo.cs": "9ac950f67d818172dfa31e4a8149857fa322f02a27d808b90186670278c41d79",
+    "SharpZipLib/Tar/InvalidHeaderException.cs": "16e4367838931d2845f3f53b0cbda0de7f91f5d686c8ea0134fbee4eea449096",
+    "SharpZipLib/Tar/ProgressMessageHandler.cs": "a8f265604a5b9b68c778ed7c8735674398a1b8146ee802604210a27ec05df595",
+    "SharpZipLib/Tar/TarArchive.cs": "168320cbeaf4003638f26279518852ac76e9c03dbc315e5ca9ee260cc4dd6106",
+    "SharpZipLib/Tar/TarBuffer.cs": "48b94cd2fa28c0e649d05e2c51c019ddc1741c749954bb03e068a0786ecdf868",
+    "SharpZipLib/Tar/TarEntry.cs": "b9da24809d12a86f2136e04084bc7df2ba565b23a52327a6c63c27346fb6f1cd",
+    "SharpZipLib/Tar/TarHeader.cs": "371f4052071851254a548d9227fb8d6cf8faab0faef05da354d0f99701a87f8f",
+    "SharpZipLib/Tar/TarInputStream.cs": "e2fb476287590b5a32f3229d9d42f949db48901ac58ce414c0dab704a7d84dbb",
+    "SharpZipLib/Tar/TarOutputStream.cs": "0288a214a57ffb84b6b516217545052502c9d38bf33d2b5b1af2d9db8dadf729",
+    "SharpZipLib/Zip/CompressionMethod.cs": "228f27410703f9593b72aa36f6f260c8de2d1fec7989f01086dc577db309a163",
+    "SharpZipLib/Zip/ZipConstants.cs": "28bd3ced3dc32721d42f622bca6724caf6d2931b5298c65c65d2a8e8ac3c31c5",
+    "SharpZipLib/Zip/ZipEntry.cs": "458d07c1f6f16f4d9a583542baee861be86c9acb2e2518c01c82b7a98dc34d81",
+    "SharpZipLib/Zip/ZipFile.cs": "28c67b29617a312c0e7897acdd3dad13e972810879669b98a6ad2815c9cde06d",
+    "SharpZipLib/Zip/ZipInputStream.cs": "06a90401e6d923595233edcb508942bcbe8a3d9a14439bccb4571f6e26e3dcdc",
+    "SharpZipLib/Zip/ZipOutputStream.cs": "a16d9be3b41f29205766dfae340222d627e0958b3ddd1282c31b0a089fb02ccf",
+    "SharpZipLib/Zip/Compression/Deflater.cs": "5a7a2df6d816c1645adbfe43c9ef0dfa41bf2efb1b6b27b17ab3c3d418b4b91c",
+    "SharpZipLib/Zip/Compression/DeflaterConstants.cs": "44639237c2fb48ed0a36e82a3a08b623361f279d4d523aec042757d2927721ea",
+    "SharpZipLib/Zip/Compression/DeflaterEngine.cs": "1a734e28bd6cfd82b55735e08edeb3b34eeba03588ed4fc6831730eb8d9e6111",
+    "SharpZipLib/Zip/Compression/DeflaterHuffman.cs": "a395de2a0a9cdc50be127e3b517d1ad9d23982c581fbcc30b0c7fe9ac6777d86",
+    "SharpZipLib/Zip/Compression/DeflaterPending.cs": "098dde95784ca42b20b190a0e56570d25f5b3096ea3a7b1a9ecfd148f663f577",
+    "SharpZipLib/Zip/Compression/DeflateStrategy.cs": "3f41dad8ed6d3141db8f441bd1d9c9ed0fc0017555d891e18f0109af22af0f4c",
+    "SharpZipLib/Zip/Compression/Inflater.cs": "927aef73b0c1d8b9a14e09296312062c9050aa567e6a7b0fb4855ae953d60c21",
+    "SharpZipLib/Zip/Compression/InflaterDynHeader.cs": "2af035e24c401d86f1b2bcc077fb3191fe6dc647a1ebab3f611bcee20c5e18fa",
+    "SharpZipLib/Zip/Compression/InflaterHuffmanTree.cs": "f3c703f306a97417f879b9c0a888b1bbfab401bfaa071ace36cb786d9c20a5aa",
+    "SharpZipLib/Zip/Compression/PendingBuffer.cs": "512371b4f51769c4da85a685a8f0377352fe3227d91e9c9600775ce70e9b7047",
+    "SharpZipLib/Zip/Compression/Streams/DeflaterOutputStream.cs": "10358722b70065966a13b9089e05f878519ad02d8e0b0dfdd809e7da938b8858",
+    "SharpZipLib/Zip/Compression/Streams/InflaterInputStream.cs": "e10dbdbc488192ec96c1bfa081a81d34ce7bd69951e591a57e1f8523a96acc44",
+    "SharpZipLib/Zip/Compression/Streams/OutputWindow.cs": "e54d5d09029f5a0e524d5748fc71c65a16f1d01369dbe511bad7cae6d7e802e3",
+    "SharpZipLib/Zip/Compression/Streams/StreamManipulator.cs": "d618fc28fef2dcd9c11eadd2a8582fb3723727ebbbdb814dd2dbd424dc762189",
+    "EU2/Map/MapSize.cs": "3f0d71da1edf34c73c16f5e2dd37fe4f01666b5be0507e91d7a2e452b5bcfdff",
+    "Maptools/LayerPainterLib/DefaultShaderProxy.cs": "fc8c067c03af6eb6f47420ffd412ac10f16edc9b6d80c4803b21ec54a998c43e"
+  }
+}

@@ -20,7 +20,7 @@ namespace MapColor
 		[STAThread]
 		static void Main(string[] args) {
 Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
-			Console.WriteLine( );		
+			Console.WriteLine( );
 
 			try {
 				MapColorParsedArguments pargs = new MapColorParsedArguments( args );
@@ -38,7 +38,7 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 					}
 					return;
 				}
-				
+
 				if ( pargs.Color >= 0 || pargs.ID >= 0 || pargs.MakeMap.Length > 0 ) {
 					IIDConvertor convertor = new Inferis2IDConvertor();
 					if ( pargs.Convertor.Length > 0 ) {
@@ -51,23 +51,24 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 						}
 					}
 					Console.WriteLine( "Using convertor \"" + convertor.ToString() + "\"." );
-					Console.WriteLine( );					
-					
+					Console.WriteLine( );
+
 					if ( pargs.MakeMap.Length > 0 ) {
+                        int paletteCount=convertor is FtgIDConvertor ? 10000 : EU2.Data.Province.InternalCount;
 						const int itemWidth = 40;
 						const int itemHeight = 12;
 						const int rowLen = 32;
 
 						Console.Write( "Creating colour map... " );
-						Bitmap map = new Bitmap( itemWidth * rowLen, itemHeight * (int)Math.Ceiling((float)EU2.Data.Province.InternalCount/(float)rowLen) );
+						Bitmap map = new Bitmap( itemWidth * rowLen, itemHeight * (int)Math.Ceiling((float)paletteCount/(float)rowLen) );
 						using ( Graphics g = Graphics.FromImage( map ) ) {
 							g.Clear( Color.White );
 							Font f = new Font( "Small Fonts", 7 );
 							g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 							int x = 0, y = 0;
-							for ( int i=0; i<EU2.Data.Province.InternalCount; ++i ) {
+							for ( int i=0; i<paletteCount; ++i ) {
 								using ( Brush b = new SolidBrush( Color.FromArgb( (0xFF << 24) | convertor.ConvertID( (ushort)i ) ) ) ) {
-									g.FillRectangle( b, x+1, y+1, itemHeight-2, itemHeight-2 );	
+									g.FillRectangle( b, x+1, y+1, itemHeight-2, itemHeight-2 );
 								}
 								g.DrawString( i.ToString(), f, Brushes.Black, x+itemHeight, y );
 
@@ -83,7 +84,7 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 						string file = pargs.MakeMap;
 						file = System.IO.Path.GetFullPath( System.IO.Path.GetFileNameWithoutExtension( file ) + ".png" );
 						map.Save( file, System.Drawing.Imaging.ImageFormat.Png );
-						Console.WriteLine( "Done. Saved to '{0}'.", System.IO.Path.GetFileName( file ) ); 
+						Console.WriteLine( "Done. Saved to '{0}'.", System.IO.Path.GetFileName( file ) );
 					}
 					else {
 						if ( pargs.Color >= 0 ) {
@@ -99,7 +100,7 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 								Console.WriteLine( "ID->RGB: ID value " + pargs.ID + " is out of range." );
 							}
 							else {
-								int rgb = convertor.ConvertID( (ushort)pargs.ID ) & 0xFFFFFF; // SKip alpha 
+								int rgb = convertor.ConvertID( (ushort)pargs.ID ) & 0xFFFFFF; // SKip alpha
 								Color c = Color.FromArgb( rgb );
 
 
@@ -137,10 +138,10 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 			Console.WriteLine( "  /ID:<id>        Specifies the ID to convert. This should be in the range 0 to 1615." );
 			Console.WriteLine( "  /C:<name>       Specifies what IDConvertor to use. If omitted, it will use \"Inferis2\". " );
 			Console.WriteLine( "                  If you specify a \"?\" as the name, the program will show a list of possible convertor names." );
-			Console.WriteLine( ); 
+			Console.WriteLine( );
 			Console.WriteLine( "Starting the program without parameters will show a GUI where you can do multiple conversions." );
 		}
-		
+
 		private static IIDConvertor[] GetConvertorInstances() {
 			Assembly source = Assembly.GetAssembly(typeof(IIDConvertor));
 			if ( source == null ) return new IIDConvertor[] { new Inferis2IDConvertor() };
@@ -149,7 +150,7 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 			ArrayList list = new ArrayList();
 			IEnumerator iter = source.GetExportedTypes().GetEnumerator();
 			while ( iter.MoveNext() ) {
-				if ( ((Type)iter.Current).GetInterface( typeof(IIDConvertor).Name ) != null ) {
+				if ( ((Type)iter.Current).GetInterface( typeof(IIDConvertor).Name ) != null && !((Type)iter.Current).IsAbstract && ((Type)iter.Current).GetConstructor(Type.EmptyTypes)!=null ) {
 					list.Add( System.Activator.CreateInstance(((Type)iter.Current)) );
 				}
 			}

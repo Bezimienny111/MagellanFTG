@@ -7,6 +7,17 @@ namespace EU2.Map.Codec
 	/// Summary description for CompressedBlock.
 	/// </summary>
 	public class CompressedBlock : GenericMapBlock {
+        public MapProfile EncodingProfile { get; set; }
+        public bool CanReuse(MapProfile target) {
+            if(EncodingProfile==null) return true;
+            if(EncodingProfile.IsFtg != target.IsFtg) return false;
+            int before=EncodingProfile.ProvinceIDThreshold, after=target.ProvinceIDThreshold;
+            if(before==after) return true;
+            ushort[] values=MapBlock.GetRawIDTable(this);
+            foreach(ushort value in values)
+                if((value<before)!=(value<after)) return false;
+            return true;
+        }
 		public enum CompareResult {
 			SizeMismatch = 0,
 			DataMismatch = -1,
@@ -72,7 +83,9 @@ namespace EU2.Map.Codec
 			//reader.BaseStream.Seek( offset, SeekOrigin.Begin );
 			int read = 0;
 			while ( read < size ) {
-				read += reader.Read( data, read, size-read );
+				int count = reader.Read(data, read, size-read);
+                if (count == 0) throw new EndOfStreamException("Unexpected end of compressed map block.");
+                read += count;
 			}
 
 			// Set offset and size to -1 to mark that this block is read and contains data.
@@ -88,7 +101,9 @@ namespace EU2.Map.Codec
 			//reader.BaseStream.Seek( offset, SeekOrigin.Begin );
 			int read = 0;
 			while ( read < size ) {
-				read += reader.Read( data, read, size-read );
+				int count = reader.Read(data, read, size-read);
+                if (count == 0) throw new EndOfStreamException("Unexpected end of compressed map block.");
+                read += count;
 			}
 
 			// Set offset and size to -1 to mark that this block is read and contains data.
@@ -106,10 +121,10 @@ namespace EU2.Map.Codec
 			get {
 				return data;
 			}
-			set { 
+			set {
 				data = null;
 				// copy the byte data into a new buffer
-				if ( value != null ) { 
+				if ( value != null ) {
 					data = new byte[value.Length];
 					value.CopyTo( data, 0 );
 				}
@@ -118,15 +133,15 @@ namespace EU2.Map.Codec
 
 		public int Size {
 			get {
-				if ( data != null ) 
+				if ( data != null )
 					return data.Length;
 				else
 					return size < 0 ? 0 : size;
 			}
 		}
 
-		public override bool IsCompressed() { 
-			return true; 
+		public override bool IsCompressed() {
+			return true;
 		}
 
 		public virtual bool Equals( CompressedBlock other ) {

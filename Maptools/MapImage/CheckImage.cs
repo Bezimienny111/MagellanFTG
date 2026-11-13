@@ -20,7 +20,7 @@ namespace MapImage
 	{
 		public static void Run( string source, PngLevel pngLevel, int checkId, bool tolerant ) {
 			PSD.File psd = QueryImage.Run( source );
-			if ( !ImportImage.CheckPSD( psd ) ) return; 
+			if ( !ImportImage.CheckPSD( psd ) ) return;
 
 			MapInfo info = MapInfo.FromBitmap( psd.Layers[Boot.MapInfoLayerName].Image );
 
@@ -28,16 +28,16 @@ namespace MapImage
 			int[] colorbuffer, idbuffer, borderbuffer;
 			ImportImage.GetBuffers( psd, out colorbuffer, out idbuffer, out borderbuffer );
 
-			// Get the convertor 
+			// Get the convertor
 			IIDConvertor convertor = ImportImage.GetConvertor( info );
 			if ( convertor == null ) return;
 
 			IIDConvertor tconvertor = null;
-			if ( convertor is Inferis2IDConvertor && tolerant ) tconvertor = new InferisProxIDConvertor(); 
+			if ( convertor is Inferis2IDConvertor && tolerant ) tconvertor = new InferisProxIDConvertor();
 
-			if ( tconvertor != null ) 
+			if ( tconvertor != null )
 				Console.WriteLine( "Using tolerant ID conversion." );
-																   
+
 			// If needed, write out test PNGs of the extracted layers
 			if ( pngLevel != PngLevel.None ) ImportImage.WriteTestPNGs( colorbuffer, idbuffer, borderbuffer, pngLevel, info );
 
@@ -46,7 +46,7 @@ namespace MapImage
 				// Use another buffer, since we need to remember the original for the image import later on.
 				int[] cidbuffer = new int[idbuffer.Length];
 
-				if ( checkId >= 0 && checkId <= Province.Count ) {
+				if ( checkId >= 0 && checkId <= MapProfile.MaximumEncodableProvinceCount-1 ) {
 					Point[] tagged = new Point[idbuffer.Length];
 					int t = 0;
 					for ( int i=0; i<idbuffer.Length; ++i ) {
@@ -61,17 +61,17 @@ namespace MapImage
 
 					Console.WriteLine( "ID {0} was found at the following locations in the file:", checkId );
 					for ( int i=0; i<t; ++i ) {
-						Console.WriteLine( "* {0},{1}", tagged[i].X, tagged[i].Y ); 
+						Console.WriteLine( "* {0},{1}", tagged[i].X, tagged[i].Y );
 					}
 				}
 				else {
-					ushort[] tagged = new ushort[Province.InternalCount];
+					ushort[] tagged = new ushort[ushort.MaxValue+1];
 					int invalid = 0;
 					for ( int i=0; i<idbuffer.Length; ++i ) {
 						cidbuffer[i] = convertor.ConvertRGB( idbuffer[i] );
-						if ( cidbuffer[i] < 0 || cidbuffer[i] > Province.Count ) {
+						if ( cidbuffer[i] < 0 || cidbuffer[i] > MapProfile.MaximumEncodableProvinceCount-1 ) {
 							if ( tconvertor != null ) cidbuffer[i] = tconvertor.ConvertRGB( idbuffer[i] );
-							if ( cidbuffer[i] < 0 || cidbuffer[i] > Province.Count ) {
+							if ( cidbuffer[i] < 0 || cidbuffer[i] > MapProfile.MaximumEncodableProvinceCount-1 ) {
 								if ( invalid++ == 0 ) Console.WriteLine();
 								Console.WriteLine( "Error: Found invalid ID {2} at ({0},{1}). RGB value = {3:X6}", i % info.Width, (int)(i/info.Width), cidbuffer[i], (idbuffer[i] & 0xFFFFFF) );
 							}

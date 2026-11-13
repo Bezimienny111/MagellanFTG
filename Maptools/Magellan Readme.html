@@ -1,17 +1,18 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
-<head>
-<title></title>
-<meta name="GENERATOR" content="Microsoft Visual Studio .NET 7.1">
-<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
-</head>
-<body>
-
-
-
-Magellan
-
-
-
-</body>
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Magellan FTG preview</title>
+<style>body{font:16px/1.55 system-ui;max-width:960px;margin:40px auto;padding:0 20px}code,pre{background:#eee}pre{padding:16px;overflow:auto}</style>
+<h1>Magellan FTG preview</h1>
+<p>Restored Magellan map tools with native FTG provinces.txt support and larger province ID ranges. Windows and .NET Framework 4.8 are required.</p>
+<p>Keep the tools and DLLs together. mview is a map viewer. Map graphics can be edited through the layered PSD workflow with mimage; a scenario editor is planned separately.</p>
+<h2>Commands</h2>
+<pre>mextract.exe MyMap.eu2map /D:"C:\Games\For The Glory\Mods\MyMod" /3
+mview.exe MyMap.eu2map
+mprovince.exe /E MyMap.eu2map provinces.txt /TXT /O
+mprovince.exe /I provinces.txt MyMap.eu2map /TXT
+mcolor.exe /ID:9999 /C:FTG16</pre>
+<p>minject writes native files to its selected destination. Use a separate mod copy. FTG supports at most 10000 province slots; the local ID-grid limit remains 255 non-TI IDs per 2048 x 2048 region.</p>
+<h2>Preview status</h2>
+<p>Earlier integration runs passed 20 checks. The user reported loading a test scenario with 144 added provinces, IDs 2020-2163, and seeing its island in FTG. A previous startup crash remains unexplained; full-range in-game compatibility is not established.</p>
+<p>See README.md for full commands, build instructions, source provenance and the scenario editor plan.</p>
+<p><a href="https://github.com/Bezimienny111/MagellanFTG">MagellanFTG repository</a> | Based on <a href="https://github.com/Inferis/Magellan">Inferis/Magellan</a>.</p>
 </html>

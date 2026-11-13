@@ -15,6 +15,8 @@ namespace EU2.Map {
 		public const int RegionSize = 256;
 
 		private ushort[] grid;
+        private MapProfile profile = new MapProfile();
+        public MapProfile Profile { get { return profile; } set { profile=value; } }
 		private int width, height;
 
 		public IDGrid() {
@@ -92,12 +94,13 @@ namespace EU2.Map {
 		}
 
 		public void BuildRegion( int regionx, int regiony, IDMap idmap, bool dontThrow ) {
+            profile=idmap.Profile;
 			Rectangle regionRect = new Rectangle( (regionx*RegionWidth)-256, (regiony*RegionHeight)-256, RegionWidth+512, RegionHeight+512 );
 			ushort[] idlist = idmap.GetIDs( regionRect.X, regionRect.Y, regionRect.Width, regionRect.Height, GetIDOptions.SkipTI, null );
 			//ushort[] idlist = idmap.GetIDs( regionx*RegionWidth, regiony*RegionHeight, RegionWidth, RegionHeight, false, false );
 			if ( idlist.Length > RegionSize ) {
 				if ( dontThrow ) return;
-				throw new RegionSizeOverflowException( regionRect ); 
+				throw new RegionSizeOverflowException( regionRect );
 			}
 
 			// Reset ids for this region
@@ -107,7 +110,7 @@ namespace EU2.Map {
 			// Don't forget to sort...
 			if ( idlist.Length > 0 ) {
 				Array.Sort( idlist, new IDComparer() );
-				if ( idlist[idlist.Length-1] == Province.MaxValue ) {
+				if ( idlist[idlist.Length-1] == profile.ProvinceCount ) {
 					ushort[] idlist2 = new ushort[idlist.Length-1];
 					Array.Copy( idlist, 0, idlist2, 0, idlist2.Length );
 					idlist = idlist2;
@@ -118,8 +121,8 @@ namespace EU2.Map {
 			if ( idlist.Length == 0 )
 				idlist = new ushort[] { Province.TerraIncognitaID };
 
-			// copy the list... 
-			if ( idlist[0] == Province.TerraIncognitaID ) 
+			// copy the list...
+			if ( idlist[0] == Province.TerraIncognitaID )
 				idlist.CopyTo( grid, offset );
 			else {
 				//Start copying at index "1" to force a TI id in the beginning.
@@ -170,6 +173,7 @@ namespace EU2.Map {
 
 		public static IDGrid Build( IDMap idmap ) {
 			IDGrid result = new IDGrid();
+            result.Profile=idmap.Profile;
 			for ( int y=0; y<result.height; ++y ) {
 				for ( int x=0; x<result.width; ++x ) {
 					result.BuildRegion( x, y, idmap );
@@ -181,6 +185,7 @@ namespace EU2.Map {
 
 		public static IDGrid ForcedBuild( IDMap idmap ) {
 			IDGrid result = new IDGrid();
+            result.Profile=idmap.Profile;
 			for ( int y=0; y<result.height; ++y ) {
 				for ( int x=0; x<result.width; ++x ) {
 					result.BuildRegion( x, y, idmap, true );
@@ -230,11 +235,11 @@ namespace EU2.Map {
 		}
 
 		public bool[] GetMarkedProvinces( int regionx, int regiony ) {
-			bool[] result = new bool[Province.InternalCount];
+			bool[] result = new bool[profile.InternalCount];
 			ushort[] ids = GetIDs( regionx, regiony );
-					
+
 			for ( int i=0; i<RegionSize; ++i ) result[ids[i]] = true;
-	
+
 			return result;
 		}
 	}

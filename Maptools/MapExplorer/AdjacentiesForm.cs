@@ -32,7 +32,7 @@ namespace MapExplorer
 				if ( workset == null ) workset = new Workset();
 
 				tvTable.Nodes.Clear();
-				for ( int i=1; i<EU2.Data.Province.Count; ++i ) {
+				for ( int i=1; i<workset.File.Profile.ProvinceCount; ++i ) {
 					TreeNode current = new TreeNode( i.ToString() + " - " + workset.File.Provinces[i].Name + " (" + workset.File.Provinces[i].Terrain.ToString() + ")" );
 					tvTable.Nodes.Add( current );
 
@@ -40,7 +40,7 @@ namespace MapExplorer
 					if ( list != null ) {
 						for ( int j=0; j<list.Length; ++j ) {
 							TreeNode sub = new TreeNode( list[j].ID.ToString() + " - " + workset.File.Provinces[list[j].ID].Name + " (" + workset.File.Provinces[list[j].ID].Terrain.ToString() + ")" );
-							if ( list[j].Type == EU2.Map.AdjacencyType.River ) 
+							if ( list[j].Type == EU2.Map.AdjacencyType.River )
 								sub.ForeColor = Color.Blue;
 							else
 								sub.ForeColor = Color.Brown;
@@ -87,15 +87,15 @@ namespace MapExplorer
 			this.tvTable = new System.Windows.Forms.TreeView();
 			this.panel1.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// ilTree
-			// 
+			//
 			this.ilTree.ImageSize = new System.Drawing.Size(16, 16);
 			this.ilTree.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ilTree.ImageStream")));
 			this.ilTree.TransparentColor = System.Drawing.Color.Transparent;
-			// 
+			//
 			// panel1
-			// 
+			//
 			this.panel1.Controls.Add(this.btnLookup);
 			this.panel1.Controls.Add(this.textBox1);
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -103,26 +103,26 @@ namespace MapExplorer
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(428, 28);
 			this.panel1.TabIndex = 0;
-			// 
+			//
 			// textBox1
-			// 
+			//
 			this.textBox1.Location = new System.Drawing.Point(324, 4);
 			this.textBox1.Name = "textBox1";
 			this.textBox1.Size = new System.Drawing.Size(68, 21);
 			this.textBox1.TabIndex = 0;
 			this.textBox1.Text = "textBox1";
-			// 
+			//
 			// btnLookup
-			// 
+			//
 			this.btnLookup.Font = new System.Drawing.Font("Wingdings", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(2)));
 			this.btnLookup.Location = new System.Drawing.Point(396, 4);
 			this.btnLookup.Name = "btnLookup";
 			this.btnLookup.Size = new System.Drawing.Size(24, 21);
 			this.btnLookup.TabIndex = 1;
-			this.btnLookup.Text = "è";
-			// 
+			this.btnLookup.Text = "Ã¨";
+			//
 			// tvTable
-			// 
+			//
 			this.tvTable.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tvTable.ImageIndex = -1;
 			this.tvTable.Location = new System.Drawing.Point(0, 28);
@@ -130,9 +130,9 @@ namespace MapExplorer
 			this.tvTable.SelectedImageIndex = -1;
 			this.tvTable.Size = new System.Drawing.Size(428, 279);
 			this.tvTable.TabIndex = 1;
-			// 
+			//
 			// AdjacentiesForm
-			// 
+			//
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 14);
 			this.ClientSize = new System.Drawing.Size(428, 307);
 			this.Controls.Add(this.tvTable);
@@ -157,7 +157,7 @@ namespace MapExplorer
 		private Workset workset;
 
 		private void AdjacentiesForm_Load(object sender, System.EventArgs e) {
-		
+
 		}
 	}
 }

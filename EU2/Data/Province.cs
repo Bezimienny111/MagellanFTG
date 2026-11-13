@@ -11,7 +11,7 @@ using EU2.Enums;
 namespace EU2.Data
 {
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	public class Province : ICSVReadable, ICSVWriteable {
 		public const ushort MinValue = 0;
@@ -29,15 +29,15 @@ namespace EU2.Data
 		public const ushort TerraIncognitaID = MinID;
 		public const ushort BorderID = MaxValue;
 		public const ushort BorderOutlineID = MaxValue+1;
-		
+
 		public static Province Filler = new Province( true );
 
 		private const int TerrainVariantCount = 4;
 		private const int ExtraRiverDiscoverCount = 3;
 
-		private static ushort[] DefaultIDsHRE = new ushort[] { 302, 304, 305, 306, 310, 311, 312, 313, 314, 315, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 343, 344, 345, 346, 347, 348, 349, 350, 351, 369, 371, 372, 373, 374, 375, 377, 378, 379, 380, 387, 388, 389, 400, 401, 402, 403, 404, 405, 1612 }; 
+		private static ushort[] DefaultIDsHRE = new ushort[] { 302, 304, 305, 306, 310, 311, 312, 313, 314, 315, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 343, 344, 345, 346, 347, 348, 349, 350, 351, 369, 371, 372, 373, 374, 375, 377, 378, 379, 380, 387, 388, 389, 400, 401, 402, 403, 404, 405, 1612 };
 		private static ushort[] DefaultIDsTOTSpain = new ushort[] { 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 198, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 690, 691, 692, 693, 694, 817, 822 };
-		private static ushort[] DefaultIDsTOTPortugal = new ushort[] { 183, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 568, 672, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 768, 769, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 780, 781, 782, 783, 784, 785, 786, 787, 788, 789, 790, 791, 792, 793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 816 }; 
+		private static ushort[] DefaultIDsTOTPortugal = new ushort[] { 183, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 568, 672, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 768, 769, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 780, 781, 782, 783, 784, 785, 786, 787, 788, 789, 790, 791, 792, 793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 816 };
 
 		private ushort id;
 		private string name;
@@ -132,7 +132,7 @@ namespace EU2.Data
 			int pid = reader.ReadInt();
 
 			if ( pid < 0 ) return false; // Stop reading
-			
+
 			try {
 				id = (ushort)pid;
 				name = reader.ReadString();
@@ -195,7 +195,7 @@ namespace EU2.Data
 		}
 
 		public void WriteToCSV( CSVWriter writer ) {
-			if ( id == ushort.MaxValue ) 
+			if ( id == ushort.MaxValue )
 				writer.Write( -1 );
 			else
 				writer.Write( id );
@@ -241,7 +241,7 @@ namespace EU2.Data
 			writer.Write( area );
 			writer.Write( region );
 			writer.Write( continent );
-			if ( defaultCityName == null || defaultCityName.Length == 0 ) 
+			if ( defaultCityName == null || defaultCityName.Length == 0 )
 				writer.Write( "#N/A" );
 			else
 				writer.Write( defaultCityName );
@@ -297,31 +297,31 @@ namespace EU2.Data
 			nativesTolerance = int.Parse( parent.SelectSingleNode( "NativesTolerance" ).InnerText );
 
 			parent = source.SelectSingleNode( "CityPosition" );
-			cityPos = new Point( 
+			cityPos = new Point(
 				int.Parse( parent.Attributes.GetNamedItem( "x" ).Value ),
 				int.Parse( parent.Attributes.GetNamedItem( "y" ).Value ) );
 
 			parent = source.SelectSingleNode( "ArmyPosition" );
-			armyPos = new Point( 
+			armyPos = new Point(
 				int.Parse( parent.Attributes.GetNamedItem( "x" ).Value ),
 				int.Parse( parent.Attributes.GetNamedItem( "y" ).Value ) );
-			
+
 			parent = source.SelectSingleNode( "PortPosition" );
-			portPos = new Point( 
+			portPos = new Point(
 				int.Parse( parent.Attributes.GetNamedItem( "x" ).Value ),
 				int.Parse( parent.Attributes.GetNamedItem( "y" ).Value ) );
 			portAdjacency = int.Parse( parent.Attributes.GetNamedItem( "adjacency" ).Value );
 
 			parent = source.SelectSingleNode( "ManufactoryPosition" );
-			manufactoryPos = new Point( 
+			manufactoryPos = new Point(
 				int.Parse( parent.Attributes.GetNamedItem( "x" ).Value ),
 				int.Parse( parent.Attributes.GetNamedItem( "y" ).Value ) );
 
 			int i = 0;
 			parent = source.SelectSingleNode( "TerrainVariants" );
 			foreach ( XmlNode subparent in parent.SelectNodes( "TerrainVariant" ) ) {
-				terrainVariants[i++] = new TerrainVariant( 
-					new Point( 
+				terrainVariants[i++] = new TerrainVariant(
+					new Point(
 						int.Parse( subparent.Attributes.GetNamedItem( "x" ).Value ),
 						int.Parse( subparent.Attributes.GetNamedItem( "y" ).Value ) ),
 					int.Parse( subparent.Attributes.GetNamedItem( "variant" ).Value ) );
@@ -345,21 +345,21 @@ namespace EU2.Data
 
 			parent = source.SelectSingleNode( "FillCoordinates" );
 			if ( parent != null ) {
-				fillCoordinates = new Point( 
+				fillCoordinates = new Point(
 					int.Parse( parent.Attributes.GetNamedItem( "x" ).Value ),
 					int.Parse( parent.Attributes.GetNamedItem( "y" ).Value ) );
 			}
 
 			return true;
 		}
-			
+
 		public bool ReadFrom( XmlReader reader ) {
 			// Get id
 			if ( !reader.HasAttributes ) return false; // stop reading
 
 			int pid = int.Parse(reader.GetAttribute( "id" ));
 			if ( pid < 0 ) return false; // Stop reading
-			
+
 			while ( reader.Read() ) {
 				// Stop when end element is reached
 				if ( reader.NodeType == XmlNodeType.EndElement && reader.Name == "Province" ) break;
@@ -368,7 +368,7 @@ namespace EU2.Data
 				switch ( reader.Name ) {
 					case "Name":
 						reader.Read(); // read value
-						name = reader.Value; 
+						name = reader.Value;
 						reader.Read(); // read end element
 						break;
 
@@ -399,11 +399,11 @@ namespace EU2.Data
 			}
 			return true;
 		}
-			
+
 		public void WriteTo( XmlWriter writer ) {
 			writer.WriteStartElement( "Province" );
 
-			if ( id < ushort.MaxValue ) 
+			if ( id < ushort.MaxValue )
 				writer.WriteAttributeString( "id", id.ToString() );
 
 			writer.WriteElementString( "Name", name );
@@ -459,13 +459,13 @@ namespace EU2.Data
 			writer.WriteAttributeString( "x", manufactoryPos.X.ToString() );
 			writer.WriteAttributeString( "y", manufactoryPos.Y.ToString() );
 			writer.WriteEndElement();
-			
+
 			writer.WriteStartElement( "PortPosition" );
 			writer.WriteAttributeString( "x", portPos.X.ToString() );
 			writer.WriteAttributeString( "y", portPos.Y.ToString() );
 			writer.WriteAttributeString( "adjacency", portAdjacency.ToString() );
 			writer.WriteEndElement();
-			
+
 			writer.WriteStartElement( "TerrainVariants" );
 			for ( int i=0; i<TerrainVariantCount; ++i ) {
 				if ( terrainVariants[i].Location.X < 0 || terrainVariants[i].Location.Y < 0 ) continue;
@@ -495,28 +495,28 @@ namespace EU2.Data
 			writer.WriteAttributeString( "x", fillCoordinates.X.ToString() );
 			writer.WriteAttributeString( "y", fillCoordinates.Y.ToString() );
 			writer.WriteEndElement();
-			
+
 			writer.WriteEndElement(); // Province
 			writer.WriteWhitespace( "\n" );
 		}
 
-		public bool IsRiver() { 
+		public bool IsRiver() {
 			return terrain == Terrain.River;
 		}
 
-		public bool IsOcean() { 
+		public bool IsOcean() {
 			return terrain == Terrain.Ocean;
 		}
-		
-		public bool IsLand() { 
-			return terrain == Terrain.Plains || terrain == Terrain.Forest || terrain == Terrain.Desert || 
+
+		public bool IsLand() {
+			return terrain == Terrain.Plains || terrain == Terrain.Forest || terrain == Terrain.Desert ||
 				terrain == Terrain.Mountain || terrain == Terrain.Marsh || terrain == Terrain.Unknown;
 		}
-		
-		public bool IsLandNoTI() { 
-			return id > TerraIncognitaID && id < Province.Count && IsLand();
+
+		public bool IsLandNoTI() {
+			return id > TerraIncognitaID && IsLand();
 		}
-		
+
 
 		#region CSV Properties
 		// Id;Name;PIW name;Religion;Culture;SizeModifier;Pashas;Climate;Ice?;Storm?;Galleys;
@@ -524,9 +524,9 @@ namespace EU2.Data
 		// Difficulty for Colonization;Native Combat Strength;Ferocity;Efficiency of Natives in combat;
 		// Negotiation Value for Trading Posts;Natives Tolerance value ;City XPos;City YPos;
 		// Army XPos;ArmyYPos;PortXPos;Port YPos;Manufactory XPos; Manufactory YPos;
-		// Port/sea Adjacency;Terrain x;Terrain Y;Terrain variant;Terrain x;Terrain Y; 
-		// Terrain variant;Terrain x;Terrain Y;Terrain variant;Terrain x;Terrain Y;Terrain variant; 
-		// Area;Region;Continent;;Extra River Desc Link 1;Extra River Desc Link 2; // 
+		// Port/sea Adjacency;Terrain x;Terrain Y;Terrain variant;Terrain x;Terrain Y;
+		// Terrain variant;Terrain x;Terrain Y;Terrain variant;Terrain x;Terrain Y;Terrain variant;
+		// Area;Region;Continent;;Extra River Desc Link 1;Extra River Desc Link 2; //
 		// Extra River Desc Link 3;;Fill coord X;Fill coord Y;;;;;;;;;;;;;;;;
 		// ---
 		// 340;Zeeland;coastal;reformed;dutch;0;0;3;0;0;0;
@@ -546,37 +546,37 @@ namespace EU2.Data
 			get { return name; }
 			set { name = value; }
 		}
-		
+
 		public PlaceInWorld PIW {
 			get { return piw; }
 			set { piw = value; }
 		}
-		
+
 		public EU2.Enums.Religion Religion {
 			get { return religion; }
 			set { religion = value; }
 		}
-		
+
 		public EU2.Enums.Culture Culture {
 			get { return culture; }
 			set { culture = value; }
 		}
-		
+
 		public int SizeModifier {
 			get { return sizeModifier; }
 			set { sizeModifier = value; }
 		}
-		
+
 		public int Pashas {
 			get { return pashas; }
-			set { manpower = value; }
+			set { pashas = value; }
 		}
-		
+
 		public int Climate {
 			get { return climate; }
 			set { climate = value; }
 		}
-		
+
 		public int Ice {
 			get { return ice; }
 			set { ice = value; }
@@ -586,7 +586,7 @@ namespace EU2.Data
 			get { return storm; }
 			set { storm = value; }
 		}
-		
+
 		public bool Galleys {
 			get { return galleys; }
 			set { galleys = value; }
@@ -616,7 +616,7 @@ namespace EU2.Data
 			get { return minevalue; }
 			set { minevalue = value; }
 		}
-		
+
 		public EU2.Enums.Goods Goods {
 			get { return goods; }
 			set { goods = value; }
@@ -631,52 +631,52 @@ namespace EU2.Data
 			get { return cotHistoricalModifier; }
 			set { cotHistoricalModifier = value; }
 		}
-		
+
 		public int ColonizationDifficulty {
 			get { return colonizationDifficulty; }
 			set { colonizationDifficulty = value; }
 		}
-		
+
 		public int NativeCombatStrength {
 			get { return nativeCombatStrength; }
 			set { nativeCombatStrength = value; }
 		}
-		
+
 		public float NativeFerocity {
 			get { return ferocity; }
 			set { ferocity = value; }
 		}
-		
+
 		public float NativeCombatEfficiency {
 			get { return nativeCombatEfficiency; }
 			set { nativeCombatEfficiency = value; }
 		}
-		
+
 		public int TradingPostsNegotiation {
 			get { return tradingPostsNegotiation; }
 			set { tradingPostsNegotiation = value; }
 		}
-		
+
 		public int NativesTolerance {
 			get { return nativesTolerance; }
 			set { nativesTolerance = value; }
 		}
-		
+
 		public System.Drawing.Point CityPosition {
 			get { return cityPos; }
 			set { cityPos = value; }
 		}
-		
+
 		public System.Drawing.Point ArmyPosition {
 			get { return armyPos; }
 			set { armyPos = value; }
 		}
-		
+
 		public System.Drawing.Point PortPosition {
 			get { return portPos; }
 			set { portPos = value; }
 		}
-		
+
 		public System.Drawing.Point ManufactoryPosition {
 			get { return manufactoryPos; }
 			set { manufactoryPos = value; }
@@ -686,10 +686,10 @@ namespace EU2.Data
 			get { return portAdjacency; }
 			set { portAdjacency = value; }
 		}
-		
+
 		public TerrainVariant[] TerrainVariants {
 			get { return terrainVariants; }
-			set { 
+			set {
 				if ( value == null )
 					terrainVariants = new TerrainVariant[TerrainVariantCount];
 				else {
@@ -704,25 +704,25 @@ namespace EU2.Data
 			get { return area; }
 			set { area = value; }
 		}
-		
+
 		public string Region {
 			get { return region; }
 			set { region = value; }
 		}
-		
+
 		public string Continent {
 			get { return continent; }
 			set { continent = value; }
 		}
-		
+
 		public string DefaultCityName {
 			get { return defaultCityName; }
 			set { if ( value != null && value.Trim().Length == 0 ) value = null; defaultCityName = value; }
 		}
-		
+
 		public int[] ExtraRiverDiscover {
 			get { return extraRiverDiscover; }
-			set { 
+			set {
 				if ( value == null )
 					extraRiverDiscover = new int[ExtraRiverDiscoverCount];
 				else {
@@ -737,7 +737,7 @@ namespace EU2.Data
 			get { return fillCoordinates; }
 			set { fillCoordinates = value; }
 		}
-		
+
 		#endregion
 	}
 

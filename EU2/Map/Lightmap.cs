@@ -12,7 +12,33 @@ namespace EU2.Map
 	/// Summary description for Lightmap.
 	/// </summary>
 	public class Lightmap : EU2.IO.IStreamWriteable, ILightmapDimensions {
-		#region Public Constants 
+        private MapProfile profile = new MapProfile();
+        public MapProfile Profile {
+            get { return provinces != null ? provinces.Profile : profile; }
+            set {
+                profile=value;
+                if(blocks==null) return;
+                MapProfile snapshot=value.Snapshot();
+                foreach(GenericMapBlock item in blocks) {
+                    CompressedBlock block=item as CompressedBlock;
+                    if(block!=null && block.EncodingProfile==null) block.EncodingProfile=snapshot;
+                }
+            }
+        }
+        private void PrepareBlock(int index,int x,int y) {
+            CompressedBlock compressed=blocks[index] as CompressedBlock;
+            if(compressed!=null && compressed.CanReuse(Profile)) return;
+            if(compressed!=null && compressed.EncodingProfile!=null && compressed.EncodingProfile.IsFtg==Profile.IsFtg
+                && compressed.EncodingProfile.ProvinceIDThreshold<=Profile.ProvinceIDThreshold) {
+                blocks[index]=MapBlock.RebaseOwnerTable(compressed,Profile);
+                return;
+            }
+            MapBlock raw=compressed==null ? (MapBlock)blocks[index] : new MapBlock(compressed,adjacent,Profile);
+            compressed=raw.Compress(x,y,zoom,provinces,adjacent,idmap);
+            compressed.EncodingProfile=Profile.Snapshot();
+            blocks[index]=compressed;
+        }
+		#region Public Constants
 		public const int BaseWidth = 18944;
 		public const int BaseHeight = 7296;
         public const int BaseWidthInBlocks = BaseWidth >> BlockFactor;
@@ -21,7 +47,7 @@ namespace EU2.Map
         public const int TotalBlocks = BaseWidthInBlocks * BaseHeightInBlocks;
 		public const int BlockFactor = 5;
 		public const int BlockSize = 1 << BlockFactor;
-        public const int PixelsPerBlock = Lightmap.BlockSize * Lightmap.BlockSize;		
+        public const int PixelsPerBlock = Lightmap.BlockSize * Lightmap.BlockSize;
         #endregion
 
 		#region Constructors
@@ -112,7 +138,7 @@ namespace EU2.Map
 			}
 
 			// Read another byte. The last offset is stored as a 4-byte integer, but only 3 bytes where read in the loop before.
-			reader.ReadByte();			
+			reader.ReadByte();
 
 			// Read all the actual data afterwards
 			for ( int i=0; i<blockcount; ++i ) {
@@ -130,7 +156,7 @@ namespace EU2.Map
 			}
 
 			// Read last offset (size), which we don't need
-			reader.ReadByte();			
+			reader.ReadByte();
 
 			// Read all the remaining data into a buffer
 			MemoryStream stream = new MemoryStream( blocks.Length * 6 );
@@ -138,7 +164,7 @@ namespace EU2.Map
 			byte[] buffer = new byte[4096];
 			int count = 0;
 			while ( (count = reader.Read( buffer, 0, 4096 )) > 0 ) {
-				stream.Write( buffer, 0, count );	
+				stream.Write( buffer, 0, count );
 			}
 
 			// Okay, we now have a memorystream were we can search in
@@ -148,14 +174,14 @@ namespace EU2.Map
 			}
 			stream.Close();
 		}
-		
+
 		/// <summary>
 		/// Write all the compressed blocks in this lightmap object to a stream. This will build 2 parts: the offsets to the blocks, and
 		/// the block data itself.
 		/// </summary>
 		/// <param name="stream">The stream to write the blocks to</param>
 		public void WriteTo( BinaryWriter writer, bool postcompress ) {
-			if ( postcompress ) 
+			if ( postcompress )
 				WriteToPostCompress( writer );
 			else
 				WriteToNormal( writer );
@@ -164,14 +190,14 @@ namespace EU2.Map
 		public void WriteTo( BinaryWriter writer ) {
 			WriteToNormal( writer );
 		}
-			
+
 		public void WriteToPostCompress( BinaryWriter writer ) {
 			// Three runs:
 
 			// First run: convert each decompressed block to a compressed block.
 			int rx = 0, ry = 0;
 			for ( int i=0; i<blocks.Length; ++i ) {
-				if ( !blocks[i].IsCompressed() ) blocks[i] = ((MapBlock)blocks[i]).Compress( rx, ry, zoom, provinces, adjacent, idmap );
+				PrepareBlock(i,rx,ry);
 
 				rx += (BlockSize << zoom);
 				if ( rx >= Lightmap.BaseWidth ) {
@@ -214,9 +240,9 @@ namespace EU2.Map
 
 			// fourth run: write offsets
 			for ( int i=0; i<blocks.Length; ++i ) {
-				writer.Write( new byte[3] { (byte)(offsets[i] & 0xff), 
-											  (byte)((offsets[i] >> 8) & 0xff), 
-											  (byte)((offsets[i] >> 16) & 0xff) }, 
+				writer.Write( new byte[3] { (byte)(offsets[i] & 0xff),
+											  (byte)((offsets[i] >> 8) & 0xff),
+											  (byte)((offsets[i] >> 16) & 0xff) },
 					0, 3 );
 			}
 			// Write the last offset (actually, the total size) as a 4byte integer.
@@ -225,26 +251,25 @@ namespace EU2.Map
 			// Last run: write all the block data.
 			// These blocks are already compressed, so no more work to do.
 			for ( int i=0; i<blocks.Length; ++i ) {
-				if ( i == redirect[i] ) 
+				if ( i == redirect[i] )
 					((CompressedBlock)blocks[i]).WriteTo( writer );
 			}
 		}
-			
+
 		public void WriteToNormal( BinaryWriter writer ) {
 			int blockcount = blocks.Length;
 
 			// First run: convert each decompressed block to a compressed block.
-			// Then write the offset for this block. 
+			// Then write the offset for this block.
 			int offset = 0;
 			int rx = 0, ry = 0;
 			for ( int i=0; i<blockcount; ++i ) {
 				// not compressed? Compress it before storing.
-				if ( !blocks[i].IsCompressed() ) 
-					blocks[i] = ((MapBlock)blocks[i]).Compress( rx, ry, zoom, provinces, adjacent, idmap );
+				PrepareBlock(i,rx,ry);
 
-				writer.Write( new byte[3] { (byte)(offset & 0xff), 
-											  (byte)((offset >> 8) & 0xff), 
-											  (byte)((offset >> 16) & 0xff) }, 
+				writer.Write( new byte[3] { (byte)(offset & 0xff),
+											  (byte)((offset >> 8) & 0xff),
+											  (byte)((offset >> 16) & 0xff) },
 					0, 3 );
 				offset += ((CompressedBlock)blocks[i]).Size;
 				rx += (BlockSize << zoom);
@@ -272,7 +297,7 @@ namespace EU2.Map
 		}
 
 		#endregion
-		
+
 		public bool VolatileDecompression {
 			get { return volatiledecompression; }
 			set { volatiledecompression = value; }
@@ -284,8 +309,7 @@ namespace EU2.Map
 			int rx = 0, ry = 0;
 			for ( int i=0; i<blockcount; ++i ) {
 				// not compressed? Compress it.
-				if ( !blocks[i].IsCompressed() ) 
-					blocks[i] = ((MapBlock)blocks[i]).Compress( rx, ry, zoom, provinces, adjacent, idmap );
+				PrepareBlock(i,rx,ry);
 
 				rx += (BlockSize << zoom);
 				if ( rx >= Lightmap.BaseWidth ) {
@@ -308,10 +332,11 @@ namespace EU2.Map
 			for ( int i=0; i<indexes.Length; ++i ) {
 				if ( indexes[i] < 0 || indexes[i] >= blocks.Length ) continue;
 
-				if ( blocks[i].IsCompressed() ) blocks[indexes[i]] = new MapBlock( (CompressedBlock)blocks[indexes[i]], adjacent );
-				x = (indexes[i] % SizeBlocks.Width) << BlockFactor;
-				y = (indexes[i] / SizeBlocks.Width) << BlockFactor;
+				if ( blocks[indexes[i]].IsCompressed() ) blocks[indexes[i]] = new MapBlock( (CompressedBlock)blocks[indexes[i]], adjacent, Profile );
+				x = (indexes[i] % SizeBlocks.Width) << (BlockFactor+zoom);
+				y = (indexes[i] / SizeBlocks.Width) << (BlockFactor+zoom);
 				blocks[indexes[i]] = ((MapBlock)blocks[indexes[i]]).Compress( x, y, zoom, provinces, adjacent, idmap );
+                ((CompressedBlock)blocks[indexes[i]]).EncodingProfile=Profile.Snapshot();
 			}
 		}
 
@@ -326,9 +351,9 @@ namespace EU2.Map
 					// Get 4 blocks
 					int index = (y<<1)*stride+(x<<1);
 
-					result.blocks[blockindex++] = MapBlock.Combine( 
-						GetDecompressedBlock( index+stride+1 ),		// bottomright 
-						GetDecompressedBlock( index+stride ),		// bottomleft	
+					result.blocks[blockindex++] = MapBlock.Combine(
+						GetDecompressedBlock( index+stride+1 ),		// bottomright
+						GetDecompressedBlock( index+stride ),		// bottomleft
 						GetDecompressedBlock( index+1 ),			// topright
 						GetDecompressedBlock( index )   			// topleft
 					).Compress( (x << BlockFactor) << (zoom), (y << BlockFactor) << (zoom), zoom+1, provinces, adjacent, idmap );
@@ -370,9 +395,9 @@ namespace EU2.Map
 					// Get 4 blocks
 					int index = y*stride+x;
 
-					result1.blocks[blockindex1++] = MapBlock.Combine( 
-						GetDecompressedBlock( index+stride+1 ),		// bottomright 
-						GetDecompressedBlock( index+stride ),		// bottomleft	
+					result1.blocks[blockindex1++] = MapBlock.Combine(
+						GetDecompressedBlock( index+stride+1 ),		// bottomright
+						GetDecompressedBlock( index+stride ),		// bottomleft
 						GetDecompressedBlock( index+1 ),			// topright
 						GetDecompressedBlock( index )   			// topleft
 						).Compress( (x << BlockFactor) << zoom, (y << BlockFactor) << zoom, zoom+1, provinces, adjacent, idmap );
@@ -436,7 +461,7 @@ namespace EU2.Map
 		}
 
 		public RawImage DecodeBlockImage( CompressedBlock block, Point location ) {
-			return DecodeBlockImage( new MapBlock( block, adjacent ), location );
+			return DecodeBlockImage( new MapBlock( block, adjacent, Profile ), location );
 		}
 
 		public RawImage DecodeImage( Rectangle rect ) {
@@ -449,7 +474,7 @@ namespace EU2.Map
 			RawImage image = new RawImage( zoom, integralrect );
 			ImageDecoder decoder = new ImageDecoder( image );
 
-#if false 
+#if false
 			// Create a grid of decompressed blocks first
 			Point gridloc = integralrect.Location;
 			for ( int y=0; y<size.Height; ++y ) {
@@ -459,7 +484,7 @@ namespace EU2.Map
 					MapBlock bottom = (MapBlock)this[GetBlockIndex( gridloc.X, gridloc.Y + BlockSize )];
 					MapBlock bottomright = (MapBlock)this[GetBlockIndex( gridloc.X + BlockSize, gridloc.Y + BlockSize )];
 
-					decoder.Decode4( x << BlockFactor, y << BlockFactor, self, right, bottom, bottomright ); 
+					decoder.Decode4( x << BlockFactor, y << BlockFactor, self, right, bottom, bottomright );
 
 					gridloc.X = NormalizeX( gridloc.X + (BlockSize << zoom) );
 				}
@@ -476,12 +501,12 @@ namespace EU2.Map
 				MapBlock bottomright = (MapBlock)this[GetBlockIndex( gridloc.X + BlockSize, gridloc.Y + BlockSize )];
 				gridloc.Y -= BlockSize;
 
-				decoder.Decode4( x << BlockFactor, (size.Height-1) << BlockFactor, self, right, bottom, bottomright ); 
+				decoder.Decode4( x << BlockFactor, (size.Height-1) << BlockFactor, self, right, bottom, bottomright );
 				for ( int y=size.Height-2; y>=0; --y ) {
 					self = (MapBlock)this[GetBlockIndex( gridloc )];
 					right = (MapBlock)this[GetBlockIndex( gridloc.X + BlockSize, gridloc.Y )];
-					
-					decoder.Decode2( x << BlockFactor, y << BlockFactor, self, right ); 
+
+					decoder.Decode2( x << BlockFactor, y << BlockFactor, self, right );
 					gridloc.Y -= BlockSize;
 				}
 				gridloc.X = NormalizeX( gridloc.X - BlockSize );
@@ -501,7 +526,7 @@ namespace EU2.Map
 
 		public void EncodeImage( RawImage image ) {
 			// This should be on an integral boundary
-			if ( !CoordMap.FitToGrid( image.Bounds ).Equals( image.Bounds ) ) 
+			if ( !CoordMap.FitToGrid( image.Bounds ).Equals( image.Bounds ) )
 				throw new ArgumentOutOfRangeException( "image.Bounds", "The bounds of the RawImage are not on grid bounds." );
 
 			// We have to enlarge our memory because the encoding needs to have the right/bottom values.
@@ -537,42 +562,42 @@ namespace EU2.Map
 
 		#region Blocks and Resolution
 		public CompressedBlock GetCompressedBlock( int index ) {
-			if ( index < 0 || index >= blocks.Length ) return null; 
+			if ( index < 0 || index >= blocks.Length ) return null;
 
 			if ( !blocks[index].IsCompressed() ) throw new NotSupportedException();
-			
+
 			return (CompressedBlock)blocks[index];
 		}
 
 		public MapBlock GetDecompressedBlock( int index ) {
-			if ( index < 0 || index >= blocks.Length ) return null; 
+			if ( index < 0 || index >= blocks.Length ) return null;
 
 			if ( blocks[index].IsCompressed() )
-				return new MapBlock( (CompressedBlock)blocks[index], adjacent );
-				
+				return new MapBlock( (CompressedBlock)blocks[index], adjacent, Profile );
+
 			return (MapBlock)blocks[index];
 		}
 
 		public MapBlock this[int index] {
 			get {
-				if ( index < 0 || index >= blocks.Length ) return null; 
+				if ( index < 0 || index >= blocks.Length ) return null;
 				if ( blocks[index] == null ) return null;
 
 				// Decompress first if necessary
 				//Console.WriteLine( "block {0} - {1}", index, blocks[index].IsCompressed() );
 				if ( blocks[index].IsCompressed() ) {
-					if ( volatiledecompression ) 
-						return new MapBlock( (CompressedBlock)blocks[index], adjacent );
+					if ( volatiledecompression )
+						return new MapBlock( (CompressedBlock)blocks[index], adjacent, Profile );
 					else {
 						CompressedBlock compressed = (CompressedBlock)blocks[index];
-						blocks[index] = new MapBlock( compressed, adjacent );
+						blocks[index] = new MapBlock( compressed, adjacent, Profile );
 					}
 				}
 
 				return (MapBlock)blocks[index];
 			}
 			set {
-				if ( index < 0 || index >= blocks.Length ) return; 
+				if ( index < 0 || index >= blocks.Length ) return;
 				blocks[index] = value;
 			}
 		}
@@ -724,7 +749,7 @@ namespace EU2.Map
 		private int zoom;
 		private ProvinceList provinces;
 		private AdjacencyTable adjacent;
-		private IDMap idmap;	
+		private IDMap idmap;
 		private bool volatiledecompression;
 		#endregion
 	}

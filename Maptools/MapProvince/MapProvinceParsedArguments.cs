@@ -12,6 +12,7 @@ namespace MapProvince
 	public enum ExportMode {
 		DontCare,
 		Plain,
+        TXT,
 		XML
 	}
 
@@ -58,7 +59,9 @@ namespace MapProvince
 				case "e": case "export":
 					action = Action.ExportProvince;
 					break;
-				case "x": case "xml":
+				case "txt": case "ftg":
+                    mode=ExportMode.TXT; break;
+                case "x": case "xml":
 					mode = ExportMode.XML;
 					break;
 				case "c": case "csv":

@@ -41,15 +41,20 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 					Console.WriteLine( "No source file specified!" );
 					return;
 				}
-				string source = pargs.Source; 
+				ExportMode selectedMode=pargs.Mode;
+                if(selectedMode==ExportMode.DontCare) {
+                    if(pargs.Action==Action.ImportProvince && Path.GetExtension(pargs.Source).Equals(".txt",StringComparison.OrdinalIgnoreCase)) selectedMode=ExportMode.TXT;
+                    else if(pargs.Action==Action.ExportProvince && System.IO.File.Exists(pargs.Source)) selectedMode=EU2.Edit.File.FromFile(pargs.Source).Provinces.IsFtg ? ExportMode.TXT : ExportMode.Plain;
+                }
+                string source = pargs.Source;
 
 				if ( Path.GetExtension( source ) == "" ) {
 					if ( pargs.Action == Action.ExportProvince )
 						source = Path.ChangeExtension( source, "eu2map" );
 					else if ( pargs.Action == Action.ImportProvince )
-						source = Path.ChangeExtension( source, pargs.Mode == ExportMode.XML ? "xml" : "csv" );
+						source = Path.ChangeExtension( source, selectedMode == ExportMode.XML ? "xml" : selectedMode==ExportMode.TXT ? "txt" : "csv" );
 				}
-				source = Path.GetFullPath( source ); 
+				source = Path.GetFullPath( source );
 
 				// Check if source exists
 				if ( !System.IO.File.Exists( source ) ) {
@@ -60,7 +65,7 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 				string target = pargs.Target;
 				if ( target == "" ) {
 					if ( pargs.Action == Action.ExportProvince ) {
-						target = String.Format( "{0}-provinces.{1}", Path.GetFileNameWithoutExtension( source ), pargs.Mode == ExportMode.XML ? "xml" : "csv" );
+						target = String.Format( "{0}-provinces.{1}", Path.GetFileNameWithoutExtension( source ), selectedMode == ExportMode.XML ? "xml" : selectedMode==ExportMode.TXT ? "txt" : "csv" );
 						Console.WriteLine( "No target file specified. Using default name: {0}", target );
 					}
 					else if ( pargs.Action == Action.ImportProvince ) {
@@ -71,11 +76,11 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 
 				if ( Path.GetExtension( target ) == "" ) {
 					if ( pargs.Action == Action.ExportProvince )
-						target = Path.ChangeExtension( target, pargs.Mode == ExportMode.XML ? "xml" : "csv" );
+						target = Path.ChangeExtension( target, selectedMode == ExportMode.XML ? "xml" : selectedMode==ExportMode.TXT ? "txt" : "csv" );
 					else if ( pargs.Action == Action.ImportProvince )
 						target = Path.ChangeExtension( target, "eu2map" );
 				}
-				target = Path.GetFullPath( target ); 
+				target = Path.GetFullPath( target );
 
 				// Check if target exists
 				if ( pargs.Action == Action.ExportProvince && System.IO.File.Exists( target ) && !pargs.Overwrite ) {
@@ -89,10 +94,10 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 
 				switch ( pargs.Action ) {
 					case Action.ImportProvince:
-						ImportProvince( source, target, pargs.Mode );
+						ImportProvince( source, target, selectedMode );
 						break;
 					case Action.ExportProvince:
-						ExportProvince( source, target, pargs.Mode, !pargs.NoTOT );
+						ExportProvince( source, target, selectedMode, !pargs.NoTOT );
 						break;
 				}
 #if !DEBUG
@@ -111,7 +116,10 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 			FileStream stream = null;
 			try {
 				stream = new FileStream( source, FileMode.Open, FileAccess.Read, FileShare.Read );
-				if ( mode == ExportMode.XML ) {
+				if(mode==ExportMode.TXT || Path.GetExtension(source).Equals(".txt",StringComparison.OrdinalIgnoreCase)) {
+                    provinces=ProvinceList.FromFtg(stream,new EU2.Map.MapProfile());
+                }
+                else if ( mode == ExportMode.XML ) {
 					System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 					doc.Load( stream );
 					provinces.ReadFrom( doc );
@@ -137,7 +145,7 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 			file.Provinces = provinces;
 
 			file.WriteTo( target );
-			Console.WriteLine( "Import successful." );		
+			Console.WriteLine( "Import successful." );
 		}
 
 		public static void ExportProvince( string source, string target, ExportMode mode, bool allowTOT ) {
@@ -164,7 +172,11 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 				stream = new FileStream( target, FileMode.Create, FileAccess.Write, FileShare.None );
 				using ( GlobalConfigChange gcc = new GlobalConfigChange() ) {
 					gcc.AllowTOTAndHREInProvinceList = allowTOT;
-					if ( mode == ExportMode.XML ) {
+					if(mode==ExportMode.TXT) {
+                        if(!file.Provinces.IsFtg) throw new InvalidOperationException("This map contains EU2 CSV data, not FTG provinces.txt.");
+                        file.Provinces.WriteTo(stream);
+                    }
+                    else if ( mode == ExportMode.XML ) {
 						file.Provinces.WriteTo( new System.Xml.XmlTextWriter( stream, System.Text.Encoding.UTF8 ) );
 					}
 					else {
@@ -182,8 +194,8 @@ Console.WriteLine(MapToolsVersion.Version.GetVersionString(ToolDescription));
 		private static void ShowHelp() {
 			Console.WriteLine( "Imports or exports province data from/to an EU2 map file." );
 			Console.WriteLine( );
-			Console.WriteLine( "{0} /I <source[.csv|.xml]> <destination[.eu2map]> [/XML|/CSV]", MapToolsVersion.Version.GetToolName().ToUpper() );
-			Console.WriteLine( "{0} /E <source[.eu2map]> [<destination[.csv|.xml]>] [/O] [/XML|/CSV]", MapToolsVersion.Version.GetToolName().ToUpper() );
+			Console.WriteLine( "{0} /I <source[.csv|.xml]> <destination[.eu2map]> [/TXT|/XML|/CSV]", MapToolsVersion.Version.GetToolName().ToUpper() );
+			Console.WriteLine( "{0} /E <source[.eu2map]> [<destination[.csv|.xml]>] [/O] [/TXT|/XML|/CSV]", MapToolsVersion.Version.GetToolName().ToUpper() );
 			Console.WriteLine( );
 			Console.WriteLine( "  /I              Indicates that you're importing an image into a map file." );
 			Console.WriteLine( "  /E              Indicates that you're exporting an image from a map file." );

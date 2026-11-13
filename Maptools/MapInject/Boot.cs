@@ -39,7 +39,7 @@ namespace MapInject
 
 				string source = pargs.Source;
 				if ( Path.GetExtension( source ) == "" ) source = Path.ChangeExtension( source, "eu2map" );
-				source = Path.GetFullPath( source ); 
+				source = Path.GetFullPath( source );
 
 				// Check if source exists
 				if ( !System.IO.File.Exists( source ) ) {
@@ -49,14 +49,14 @@ namespace MapInject
 
 				EU2.Install install;
 				if ( pargs.DirectoryOverride.Length > 0 ) {
-					string dir = Path.GetFullPath( pargs.DirectoryOverride ); 
+					string dir = Path.GetFullPath( pargs.DirectoryOverride );
 					if ( !Directory.Exists( dir ) ) {
 						Console.WriteLine( "The specified directory override \"{0}\" does not exist.", dir );
 						return;
 					}
 					install = EU2.Install.FromPath( dir );
 				}
-				else 
+				else
 					install = EU2.Install.FromRegistry();
 
 				if ( install == null ) {
@@ -70,7 +70,7 @@ namespace MapInject
 				file.ReadFrom( source );
 
 				Console.WriteLine( "Regenerating boundboxes..." );
-				file.BoundBoxes = new BoundBoxes( file.IDMap.CalculateBoundBoxes() );
+				file.BoundBoxes = new BoundBoxes( file.IDMap.CalculateBoundBoxes(),file.Profile );
 
 				if ( pargs.RegenerateLightmaps > 0 ) {
 					if ( file.Lightmap2 != null && file.Lightmap3 != null && pargs.RegenerateLightmaps < 2 ) {
@@ -104,12 +104,12 @@ namespace MapInject
 				Console.WriteLine( "Regenerating Incognita Grid..." );
 				file.IncognitaGrid = IncognitaGrid.Build( file.IDMap, file.Provinces, file.IDGrid );
 
-				file.FileProcessing += new EU2.Edit.FileProcessingHandler( EU2File_WriteFileItemInject ); 
+				file.FileProcessing += new EU2.Edit.FileProcessingHandler( EU2File_WriteFileItemInject );
 				file.Inject( install, new InjectParams( pargs.NoTOT ) );
 
 				if ( pargs.SaveSource ) {
-					file.FileProcessing -= new EU2.Edit.FileProcessingHandler( EU2File_WriteFileItemInject ); 
-					file.FileProcessing += new EU2.Edit.FileProcessingHandler( EU2File_WriteFileItemSave ); 
+					file.FileProcessing -= new EU2.Edit.FileProcessingHandler( EU2File_WriteFileItemInject );
+					file.FileProcessing += new EU2.Edit.FileProcessingHandler( EU2File_WriteFileItemSave );
 					file.WriteTo( source );
 				}
 
@@ -137,7 +137,7 @@ namespace MapInject
 			Console.WriteLine( );
 			Console.WriteLine( "The injector will lookup the EU2 path through the registry." );
 		}
-	
+
 		private static void EU2File_WriteFileItemInject( IFile file, EU2.Edit.FileProcessingEventArgs e ) {
 			switch ( e.Action ) {
 				case FileProcessingAction.Write:

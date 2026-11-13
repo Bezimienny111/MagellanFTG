@@ -1,0 +1,5 @@
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<PropertyGroup><Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration><Platform>AnyCPU</Platform><TargetFrameworkVersion>v4.8</TargetFrameworkVersion><OutputType>Exe</OutputType><AssemblyName>MapTest144Builder</AssemblyName><OutputPath>bin\$(Configuration)\</OutputPath><Optimize>true</Optimize></PropertyGroup>
+<ItemGroup><Reference Include="System"/><Reference Include="System.Core"/><Reference Include="System.Drawing"/><Compile Include="MapTest144Builder.cs"/>
+<ProjectReference Include="..\EU2\EU2Data.csproj"><Name>EU2Data</Name></ProjectReference><ProjectReference Include="..\EU2Edit\EU2Edit.csproj"><Name>EU2Edit</Name></ProjectReference></ItemGroup>
+<Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets"/></Project>

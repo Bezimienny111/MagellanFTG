@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 using EU2.Data;
 using EU2.Map.Drawing;
 using EU2.Map.Codec;
@@ -20,7 +21,18 @@ namespace EU2.Map
 	/// </summary>
 	public class IDMap : ScanlineCodedMap
 	{
-		private static int MaxDistance = (int)Math.Sqrt(int.MaxValue);
+		private MapProfile profile = new MapProfile();
+        public MapProfile Profile { get { return profile; } set { profile = value ?? new MapProfile(); } }
+
+        private sealed class SparseCounts {
+            private readonly Dictionary<int, SortedDictionary<ushort,int>> rows = new Dictionary<int, SortedDictionary<ushort,int>>();
+            public int this[int from,int to] {
+                get { SortedDictionary<ushort,int> row; int count; return rows.TryGetValue(from,out row) && row.TryGetValue((ushort)to,out count) ? count : 0; }
+                set { SortedDictionary<ushort,int> row; if(!rows.TryGetValue(from,out row)) { row=new SortedDictionary<ushort,int>(); rows.Add(from,row); } row[(ushort)to]=value; }
+            }
+            public IEnumerable<ushort> Neighbours(int from) { SortedDictionary<ushort,int> row; return rows.TryGetValue(from,out row) ? (IEnumerable<ushort>)row.Keys : new ushort[0]; }
+        }
+        private static int MaxDistance = (int)Math.Sqrt(int.MaxValue);
 
 		public IDMap() : base() {
 		}
@@ -36,18 +48,18 @@ namespace EU2.Map
 		}
 
 		public override bool CheckValue( int value ) {
-			return value >= Province.MinValue && value <= Province.MaxValue;
+			return value >= Province.MinValue && value <= profile.ProvinceCount;
 		}
 
 		public bool IsOldMap() {
 			int[] indexes = new int[] { 0, 344, 1513, 2101, 3011, 4390, 5104, 6119 };
 
 			for ( int i=0; i<indexes.Length; ++i ) {
-				IDZone[] zones = lines[i].GetZones();
+				IDZone[] zones = lines[indexes[i]].GetZones();
 
 				int previd = zones[0].ID;
 				for ( int z=1; z<zones.Length; ++z ) {
-					if ( previd == 0 && zones[z].ID == 0 || previd > 0 && zones[z].ID > 0 ) 
+					if ( previd == 0 && zones[z].ID == 0 || previd > 0 && zones[z].ID > 0 )
 						return false; // Nope!
 					previd = zones[z].ID;
 				}
@@ -88,17 +100,17 @@ namespace EU2.Map
 					// -- Skip for TI and pixels belonging to this province
 					if ( map[mx,my] == Province.TerraIncognitaID || map[mx,my] == skipid ) continue;
 					if ( !provinces[map[mx,my]].IsLandNoTI() ) continue; // Only land
-						
+
 					// Also check if adjacency exists
 					if ( adjacent != null && skipid != 0 ) {
 						int adj = adjacent.GetAdjacencyIndex( skipid, map[mx,my] );
 						if ( adj < 0 || adj >= 16 ) continue;
 					}
-							
+
 					// -- This pixel qualifies: check the distance.
-					// Normally, we should need a sqrt() too, but it doesn't really matter here, 
+					// Normally, we should need a sqrt() too, but it doesn't really matter here,
 					// as we just want "the smallest" and not how small it actually is.
-					int distance = ((mx-halfwidth)*(mx-halfwidth)) + ((my-halfheight)*(my-halfheight)); 
+					int distance = ((mx-halfwidth)*(mx-halfwidth)) + ((my-halfheight)*(my-halfheight));
 					if ( distance < max_distance ) {
 						max_distance = distance;
 						closest_id = map[mx,my];
@@ -124,9 +136,9 @@ namespace EU2.Map
 			height += y;
 			if ( height > Lightmap.BaseHeight ) height = Lightmap.BaseHeight;
 
-			int[] tagged = new int[Province.InternalCount];
+			int[] tagged = new int[profile.InternalCount];
 			// Reset all items to 0
-			for ( int i=0; i<Province.Count; ++i ) tagged[i] = 0;
+			for ( int i=0; i<profile.LastProvinceID; ++i ) tagged[i] = 0;
 
 			// Walk over the zones for each line, and tag each time we encounter a province id
 			for ( ; y<height; ++y ) {
@@ -136,13 +148,13 @@ namespace EU2.Map
 			// Count items in list
 			int count = 0;
 			ushort start = (ushort )(includeTI ? 0 : 1);
-			for ( int i=start; i<Province.InternalCount; ++i ) {
+			for ( int i=start; i<profile.InternalCount; ++i ) {
 				if ( tagged[i] > 0 && (!skipRivers || (skipRivers && !provinces[i].IsRiver()) ) ) count++;
 			}
 
 			ushort[] list = new ushort[count];
 			count = 0;
-			for ( ushort i=start; i<Province.InternalCount; ++i ) {
+			for ( ushort i=start; i<profile.InternalCount; ++i ) {
 				if ( tagged[i] > 0 && (!skipRivers || !provinces[i].IsRiver()) ) list[count++] = i;
 			}
 
@@ -166,7 +178,7 @@ namespace EU2.Map
 		public double CalcDistance( int x, int y, int perimeter, ushort id ) {
 			return CalcDistance( GetPerimeterMap( x, y, perimeter ), id );
 		}
-	
+
 		public double CalcDistance( ushort[,] map, ushort id ) {
 			if ( map.GetLength(0) != map.GetLength(1) ) throw new ArgumentOutOfRangeException( "map", "The map should be a square rectangle" );
 			int perimeter = (int)(map.GetLength(0)/2);
@@ -214,11 +226,11 @@ namespace EU2.Map
 			Array.Copy( idlist, 0, ids, 0, idlist.Length < count ? idlist.Length : count );
 			Array.Copy( distlist, 0, distances, 0, distlist.Length < count ? distlist.Length : count );
 		}
-		
+
 		public void FindNearest( Point location, int perimeter, int count, ProvinceList provinces, out ushort[] ids, out double[] distances ) {
 			FindNearest( location.X, location.Y, perimeter, count, provinces, out ids, out distances );
 		}
-		
+
 		public void FindNearest( int x, int y, int perimeter, int count, out ushort[] ids, out double[] distances ) {
 			FindNearest( x, y, perimeter, count, null, out ids, out distances );
 		}
@@ -226,13 +238,13 @@ namespace EU2.Map
 		public void FindNearest( Point location, int perimeter, int count, out ushort[] ids, out double[] distances ) {
 			FindNearest( location.X, location.Y, perimeter, count, null, out ids, out distances );
 		}
-		
+
 		public void FindNearest( int x, int y, int perimeter, ProvinceList provinces, out ushort id, out double distance ) {
 			ushort[] ids;
 			double[] distances;
 
 			FindNearest( x, y, perimeter, 1, provinces, out ids, out distances );
-			
+
 			id = ids[0];
 			distance = distances[0];
 		}
@@ -251,11 +263,11 @@ namespace EU2.Map
 
 		public AdjacencyTable BuildAdjacencyTable( Rectangle region, ProvinceList provinces ) {
 			const int Offset = 2; // 1 is too small, it seems...
-			AdjacencyTable table = new AdjacencyTable();
+			AdjacencyTable table = new AdjacencyTable(profile);
 
 			// Build a matrix of provinces by walking over the map and marking each adjacency in the matrix.
-			int[,] matrix = new int[Province.InternalCount,Province.InternalCount];
-			int[,] rivers = new int[Province.InternalCount,Province.InternalCount];
+			SparseCounts matrix = new SparseCounts();
+			SparseCounts rivers = new SparseCounts();
 
 			// Fix region
 			if ( region.Right > Lightmap.BaseWidth ) region.Width =  Lightmap.BaseWidth - region.X;
@@ -265,7 +277,7 @@ namespace EU2.Map
 
 			// Enlarge region (only if it's not encompassing the whole map).
 			// This is necessary to detect changed on the border of the region specified...
-			if ( region.X != 0 || region.Y != 0 || region.Width < Lightmap.BaseWidth || region.Width < Lightmap.BaseHeight ) {
+			if ( region.X != 0 || region.Y != 0 || region.Width < Lightmap.BaseWidth || region.Height < Lightmap.BaseHeight ) {
 				// Need to enlarge the region so that it *completely* encompasses all provinces in the original region
 
 				// First, Get a map of all the IDs in the original region
@@ -284,9 +296,9 @@ namespace EU2.Map
 			}
 
 			int id1, id2;
-			int[] places = new int[] { Offset*2, 0, 0, -Offset*2, 
-									   Offset*4, -Offset*2, Offset*2, -Offset*4, 
-									   Offset*6, -Offset*4, Offset*4, -Offset*6, 
+			int[] places = new int[] { Offset*2, 0, 0, -Offset*2,
+									   Offset*4, -Offset*2, Offset*2, -Offset*4,
+									   Offset*6, -Offset*4, Offset*4, -Offset*6,
 									   Offset*8, -Offset*6, Offset*6, -Offset*8 };
 			for ( int y=region.Top; y<region.Bottom; ++y ) {
 				// Walk over zones on this row
@@ -303,12 +315,12 @@ namespace EU2.Map
 					for ( int x=left; x<right; ++x ) {
 						#region Left/Right check
 						// -- Left/right check first
-						id1 = this[x-Offset,y]; 
+						id1 = this[x-Offset,y];
 						id2 = this[x+Offset,y];
 
 						if ( id1 != Province.TerraIncognitaID && id2 != Province.TerraIncognitaID ) {
 							if ( provinces[id2].IsRiver() ) {
-								// The right one is a river... 
+								// The right one is a river...
 								++matrix[id1,id2];
 								++matrix[id2,id1];
 
@@ -336,12 +348,12 @@ namespace EU2.Map
 
 						#region Up/down check
 						// -- Up/down check next
-						id1 = this[x,y-Offset]; 
+						id1 = this[x,y-Offset];
 						id2 = this[x,y+Offset];
 
 						if ( id1 != 0 && id2 != 0 ) {
 							if ( provinces[id2].IsRiver() ) {
-								// The bottom one is a river... 
+								// The bottom one is a river...
 								++matrix[id1,id2];
 								++matrix[id2,id1];
 
@@ -374,12 +386,12 @@ namespace EU2.Map
 			const int Threshold = 8; // we need a certain amount of matches to have adjacency...
 
 			// Start iterating at 1, no need to incorporate TI...
-			for ( ushort ph=1; ph<Province.Count; ++ph ) {
+			for ( ushort ph=1; ph<profile.ProvinceIDThreshold; ++ph ) {
 				// Skip ids not present in the original region
 				if ( histogram != null && histogram[ph] <= 0 ) continue;
 
 				// Do "normal" adjacencies first
-				for ( ushort pv=1; pv<Province.Count; ++pv ) { 
+				foreach (ushort pv in matrix.Neighbours(ph)) {
 					if ( ph == pv || provinces[pv].IsRiver() ) continue;
 					// Check for the threshold
 					if ( matrix[ph,pv] <= Threshold ) continue;
@@ -388,7 +400,7 @@ namespace EU2.Map
 				}
 
 				// Do "river" adjacencies next
-				for ( ushort pv=1; pv<Province.Count; ++pv ) { 
+				foreach (ushort pv in matrix.Neighbours(ph)) {
 					if ( ph == pv || !provinces[pv].IsRiver() ) continue;
 					// Check for the threshold
 					if ( matrix[ph,pv] <= Threshold ) continue;
@@ -399,7 +411,7 @@ namespace EU2.Map
 
 			return table;
 		}
-			
+
 		public AdjacencyTable BuildAdjacencyTable( ProvinceList provinces ) {
 			return BuildAdjacencyTable( new Rectangle( 0, 0, Lightmap.BaseWidth, Lightmap.BaseHeight ), provinces );
 		}
@@ -410,7 +422,7 @@ namespace EU2.Map
 
 		public ushort[] GetHistogram( Rectangle area ) {
 			ushort[] bitmap = ExportBitmapBuffer( area );
-			ushort[] result = new ushort[Province.InternalCount];
+			ushort[] result = new ushort[profile.InternalCount];
 
 			// Clear result
 			for ( int i=0; i<result.Length; ++i ) result[i] = 0;
@@ -422,10 +434,10 @@ namespace EU2.Map
 		}
 
 		public ProvinceBoundBox[] CalculateBoundBoxes() {
-			ProvinceBoundBox[] boxes = new ProvinceBoundBox[Province.InternalCount];
+			ProvinceBoundBox[] boxes = new ProvinceBoundBox[profile.InternalCount];
 
 			// Initialize array
-			for ( ushort i=0; i<Province.InternalCount; ++i ) {
+			for ( ushort i=0; i<profile.InternalCount; ++i ) {
 				boxes[i] = new ProvinceBoundBox( Lightmap.BaseWidth, Lightmap.BaseHeight, 0, 0, i );
 			}
 
@@ -442,7 +454,7 @@ namespace EU2.Map
 				for ( int bufindex=0; bufindex<bufcount; ++bufindex ) {
 					ushort id = line.GetZone( bufindex ).ID;
 
-					if ( id == Province.TerraIncognitaID || id > Province.Count ) continue;
+					if ( id == Province.TerraIncognitaID || id > profile.LastProvinceID ) continue;
 
 					// Check Y values first (this is simple)
 					if ( boxes[id].Top > y ) boxes[id].Top = y;
@@ -451,8 +463,8 @@ namespace EU2.Map
 					// Now for the X values
 					// We need to take special care for the zones at the dateline: the box is calculated from 2 zones...
 					if ( bufindex > 0 ) {
-						int left = line.GetZone( bufindex ).X; 
-						int right = line.GetZone( bufindex+1 ).X; 
+						int left = line.GetZone( bufindex ).X;
+						int right = line.GetZone( bufindex+1 ).X;
 
 						// Full zone (this is simple)
 						if ( boxes[id].Right > Lightmap.BaseWidth ) {
@@ -494,6 +506,7 @@ namespace EU2.Map
 
 			// We build the map in 2048/2048 blocks
 			IDMap result = new IDMap();
+            result.Profile = map.Profile;
 			IShader32 shader = new ImportIDShader();
 			bool vd = map.VolatileDecompression;
 			try {
@@ -509,7 +522,7 @@ namespace EU2.Map
 						result.ImportBitmapBuffer( x, y, width, height, map.DecodeImage( new Rectangle( x, y, width, height ), shader ) );
 					}
 				}
-			} 
+			}
 			finally {
 				map.VolatileDecompression = vd;
 			}
@@ -529,7 +542,7 @@ namespace EU2.Map
 				for ( int y=0; y<height; ++y ) {
 					for ( int x=0; x<width; ++x ) {
 						int id = memory[x,y].ID;
-						buffer[bufidx++] = id == Province.TerraIncognitaID ? Province.MaxValue : id;
+						buffer[bufidx++] = id;
 					}
 				}
 

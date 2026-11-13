@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries - Support", "Libr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapExport", "MapExport\MapExport.csproj", "{16383D69-78D4-40D6-ACDA-43AE4A79FA0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.SharpZipLib", "..\SharpZipLib\ICSharpCode.SharpZipLib.csproj", "{50DE201F-74CE-5C6A-B8E1-297DA7B27AE3}"
+EndProject
 Global
 	GlobalSection(SourceCodeControl) = preSolution
 		SccNumberOfProjects = 19
@@ -136,6 +138,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50DE201F-74CE-5C6A-B8E1-297DA7B27AE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50DE201F-74CE-5C6A-B8E1-297DA7B27AE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50DE201F-74CE-5C6A-B8E1-297DA7B27AE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50DE201F-74CE-5C6A-B8E1-297DA7B27AE3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{36168C30-E146-42C6-8874-9D04A7457DCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{36168C30-E146-42C6-8874-9D04A7457DCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36168C30-E146-42C6-8874-9D04A7457DCC}.Release|Any CPU.ActiveCfg = Release|Any CPU

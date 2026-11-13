@@ -13,14 +13,14 @@ namespace EU2.Map.Codec.MapBlockHandling
 
 		protected override void OnVisitNode( Node node, int x, int y ) {
 			if ( node.Level > 2 || node.IsLeaf() ) return;
-					
+
 			// Simple mode for now
 			int scolor = 0;
 			int sborder = 0;
-			ushort[] id = new ushort[Province.MaxValue];
-			ushort[] riverid = new ushort[Province.MaxValue];
+			ushort[] id = new ushort[ushort.MaxValue+1];
+			ushort[] riverid = new ushort[ushort.MaxValue+1];
 			int samples = 0;
-			
+
 			SampleNode( node.BottomRightChild, ref scolor, ref sborder, ref id, ref riverid, ref samples );
 			SampleNode( node.BottomLeftChild, ref scolor, ref sborder, ref id, ref riverid, ref samples );
 			SampleNode( node.TopRightChild, ref scolor, ref sborder, ref id, ref riverid, ref samples );
@@ -28,32 +28,32 @@ namespace EU2.Map.Codec.MapBlockHandling
 
 			ushort ididx = 0;
 			ushort riveridx = 0;
-			for ( ushort i=1; i<Province.MaxValue; ++i ) {
-				if ( id[i] > id[ididx] ) ididx = i;
-				if ( riverid[i] > riverid[riveridx] ) riveridx = i;
+			for ( int i=1; i<id.Length; ++i ) {
+				if ( id[i] > id[ididx] ) ididx = (ushort)i;
+				if ( riverid[i] > riverid[riveridx] ) riveridx = (ushort)i;
 			}
 
 			Debug.Assert( (byte)((sborder/samples)>>16) >= 0 && (byte)((sborder/samples)>>16) <= 2, "border assert failed" );
 
-			node.BecomeLeaf( new Pixel( 
-				(byte)((scolor/samples)>>16), 
-				ididx, 
-				riveridx, 
+			node.BecomeLeaf( new Pixel(
+				(byte)((scolor/samples)>>16),
+				ididx,
+				riveridx,
 				(byte)((sborder/samples)>>16) ) );
 		}
 
 		private void SampleNode( Node node, ref int color, ref int border, ref ushort[] id, ref ushort[] riverid, ref int samples ) {
 			if ( node.IsBranch() ) {
-				color += 
+				color +=
 					((int)node.BottomRightChild.Data.Color << 16) +
-					((int)node.BottomLeftChild.Data.Color << 16) + 
-					((int)node.TopRightChild.Data.Color << 16) + 
+					((int)node.BottomLeftChild.Data.Color << 16) +
+					((int)node.TopRightChild.Data.Color << 16) +
 					((int)node.TopLeftChild.Data.Color << 16);
 
-				border += 
+				border +=
 					((int)node.BottomRightChild.Data.Border << 16) +
-					((int)node.BottomLeftChild.Data.Border << 16) + 
-					((int)node.TopRightChild.Data.Border << 16) + 
+					((int)node.BottomLeftChild.Data.Border << 16) +
+					((int)node.TopRightChild.Data.Border << 16) +
 					((int)node.TopLeftChild.Data.Border << 16);
 
 				++id[node.BottomRightChild.Data.ID];

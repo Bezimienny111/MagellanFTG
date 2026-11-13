@@ -46,14 +46,14 @@ namespace MapImage
 			// Remove ref to PSD so it can get garbagecollected
 			psd = null;
 
-			// Get the convertor 
+			// Get the convertor
 			IIDConvertor convertor = GetConvertor( info );
 			if ( convertor == null ) return;
 
 			IIDConvertor tconvertor = null;
-			if ( convertor is Inferis2IDConvertor && tolerant ) tconvertor = new InferisProxIDConvertor(); 
+			if ( convertor is Inferis2IDConvertor && tolerant ) tconvertor = new InferisProxIDConvertor();
 
-			if ( tconvertor != null ) 
+			if ( tconvertor != null )
 				Console.WriteLine( "Using tolerant ID conversion." );
 
 			// Now, open the map file
@@ -69,9 +69,9 @@ namespace MapImage
 				int invalid = 0;
 				for ( int i=0; i<idbuffer.Length; ++i ) {
 					cidbuffer[i] = convertor.ConvertRGB( idbuffer[i] );
-					if ( cidbuffer[i] < 0 || cidbuffer[i] > Province.Count ) {
+					if ( cidbuffer[i] < 0 || cidbuffer[i] >= file.Profile.ProvinceIDThreshold ) {
 						if ( tconvertor != null ) cidbuffer[i] = tconvertor.ConvertRGB( idbuffer[i] );
-						if ( cidbuffer[i] < 0 || cidbuffer[i] > Province.Count ) {
+						if ( cidbuffer[i] < 0 || cidbuffer[i] >= file.Profile.ProvinceIDThreshold ) {
 							Console.WriteLine( "Error: Found invalid ID {2} at ({0},{1}). RGB value = {3:X6}", i % info.Width, (int)(i/info.Width), cidbuffer[i], (idbuffer[i] & 0xFFFFFF) );
 							if ( invalid++ > 10 ) {
 								Console.WriteLine( "Error: Too many invalid IDs found... Stopping." );
@@ -79,8 +79,8 @@ namespace MapImage
 							}
 						}
 					}
-					
-					if ( cidbuffer[i] == Province.TerraIncognitaID ) cidbuffer[i] = Province.MaxValue;
+
+
 				}
 
 				if ( invalid > 0 ) {
@@ -96,11 +96,11 @@ namespace MapImage
 			// and get the correct Lightmap
 			Lightmap map = null;
 			switch ( info.LightmapZoom ) {
-				case 0: 
+				case 0:
 					map = file.Lightmap1; break;
-				case 1: 
+				case 1:
 					map = file.Lightmap2; break;
-				case 2: 
+				case 2:
 					map = file.Lightmap3; break;
 			}
 
@@ -126,7 +126,7 @@ namespace MapImage
 					Console.WriteLine( "Mismatch found, updating the ID map." );
 					file.IDMap.ImportBitmapBuffer( info.Bounds, cidbuffer );
 				}
-				else 
+				else
 					Console.WriteLine( " No update needed to the ID map." );
 
 				ushort[] affectedIDs = null;
@@ -138,8 +138,8 @@ namespace MapImage
 						file.AdjacencyTable = file.IDMap.BuildAdjacencyTable( file.Provinces );
 
 						// This marks all ids as affected.
-						affectedIDs = new ushort[Province.Count];
-						for ( ushort i=0; i<Province.Count; ++i ) affectedIDs[i] = i;
+						affectedIDs = new ushort[file.Profile.ProvinceCount];
+						for ( ushort i=0; i<file.Profile.ProvinceCount; ++i ) affectedIDs[i] = i;
 
 						// Force regen of boundboxes
 						doBoundboxes = true;
@@ -162,14 +162,14 @@ namespace MapImage
 
 				if ( doBoundboxes ) {
 					Console.WriteLine( "Regenerating boundboxes..." );
-					file.BoundBoxes = new BoundBoxes( file.IDMap.CalculateBoundBoxes() );
+					file.BoundBoxes = new BoundBoxes( file.IDMap.CalculateBoundBoxes(),file.Profile );
 				}
 
 				if ( affectedIDs != null && affectedIDs.Length > 0 ) {
 					Rectangle[] boxes = file.BoundBoxes.GetBoxes( affectedIDs );
 					int[] indexes = map.GetBlockIndexes( boxes );
 					int[] indexes2 = map.GetBlockIndexes( info.Bounds );
-					
+
 					int total = indexes.Length;
 					for ( int i=0; i<indexes.Length; ++i ) {
 						for ( int e=0; e<indexes2.Length; ++e ) {
@@ -210,7 +210,7 @@ namespace MapImage
 				ushort[] tmpbuffer = MapToolsLib.Utils.ScaleIDBuffer( file.IDMap.ExportBitmapGrid( map.CoordMap.ZoomedToActual( info.Bounds ) ), map.Zoom );
 				idbuffer = new int[tmpbuffer.Length];
 				for ( int i=0; i<idbuffer.Length; ++i ) {
-					if ( tmpbuffer[i] >= Province.Count ) tmpbuffer[i] = Province.TerraIncognitaID;
+					if ( tmpbuffer[i] >= file.Profile.ProvinceIDThreshold ) tmpbuffer[i] = Province.TerraIncognitaID;
 					idbuffer[i] = (tconvertor == null ? convertor : tconvertor).ConvertID( tmpbuffer[i] );
 				}
 				Console.WriteLine( " Done." );
@@ -226,7 +226,7 @@ namespace MapImage
 			}
 			else {
 				try {
-					file.WriteTo( System.IO.FileStream.Null );	
+					file.WriteTo( System.IO.FileStream.Null );
 				}
 				catch ( Exception e ) {
 					Console.Write( "There's an error when saving the target file." );
@@ -284,7 +284,7 @@ namespace MapImage
 			else {
 				try {
 					convertor = (IIDConvertor)info.IDConvertor.GetConstructor( Type.EmptyTypes ).Invoke( null );
-				} 
+				}
 				catch {
 					Console.WriteLine( "Warning: The source contains an valid idconvertor reference, but it could not be instantiated." );
 					return null;

@@ -5,9 +5,9 @@ using Microsoft.Win32;
 namespace EU2
 {
 	/// <summary>
-	/// 
+	///
 	/// </summary>
-	public class Install 
+	public class Install
 	{
 		string rootpath;
 		//EU2.Data.Map map;
@@ -59,6 +59,23 @@ namespace EU2
 			}
 		}
 		*/
+
+        public string GetInputFile(string relative) {
+            string candidate=System.IO.Path.Combine(rootpath,relative);
+            if(System.IO.File.Exists(candidate)) return candidate;
+            System.IO.DirectoryInfo parent=new System.IO.DirectoryInfo(rootpath);
+            while(parent!=null) {
+                if(System.IO.File.Exists(System.IO.Path.Combine(parent.FullName,"FTG.exe"))) {
+                    string fallback=System.IO.Path.Combine(parent.FullName,relative);
+                    if(System.IO.File.Exists(fallback)) return fallback;
+                    break;
+                }
+                parent=parent.Parent;
+            }
+            return candidate;
+        }
+        public string GetInputMapFile(string name) { return GetInputFile(System.IO.Path.Combine("Map",name)); }
+        public string GetInputDBFile(string name) { return GetInputFile(System.IO.Path.Combine("Db",name)); }
 
 		#region Path Properties
 		public string RootPath {
@@ -119,7 +136,7 @@ namespace EU2
 			}
 		}
 		#endregion
-		
+
 		public static Install FromPath( string path )  {
 			return new Install( path );
 		}
@@ -137,7 +154,7 @@ namespace EU2
 				install = null;
 			}
 
-			return install; 
+			return install;
 		}
 
 

@@ -74,7 +74,7 @@ namespace EU2.Map
 
 						idmap.FindNearest( x, y, (int)scansize, 4, provinces, out idlist, out distances );
 						for ( int i=0; i<4; ++i ) {
-							if ( idlist[i] > Province.MaxID ) idlist[i] = Province.TerraIncognitaID;
+							if ( idlist[i] > provinces.Profile.LastPlayableID ) idlist[i] = Province.TerraIncognitaID;
 							weight = (int)(distances[i]*scanfactor);
 							weight = weight - 15 + (rnd.Next(0x7fff) & 31);
 							if ( weight < 0 ) weight = 0;
@@ -88,7 +88,7 @@ namespace EU2.Map
 						ushort id =  Province.TerraIncognitaID;
 						if ( list.Length > 0 ) {
 							id = list[0];
-							if ( id > Province.MaxID ) id = Province.TerraIncognitaID;
+							if ( id > provinces.Profile.LastPlayableID ) id = Province.TerraIncognitaID;
 						}
 
 						result.grid[x >> Lightmap.BlockFactor, y >> Lightmap.BlockFactor].data[0].id = idgrid.MapID( x, y, id );
@@ -99,7 +99,7 @@ namespace EU2.Map
 
 						result.grid[x >> Lightmap.BlockFactor, y >> Lightmap.BlockFactor].data[2].id = 0;
 						result.grid[x >> Lightmap.BlockFactor, y >> Lightmap.BlockFactor].data[2].weight = 255;
-					
+
 						result.grid[x >> Lightmap.BlockFactor, y >> Lightmap.BlockFactor].data[3].id = 0;
 						result.grid[x >> Lightmap.BlockFactor, y >> Lightmap.BlockFactor].data[3].weight = 255;
 					}
@@ -132,8 +132,8 @@ namespace EU2.Map
 		}
 
 		public void ReadFrom( BinaryReader reader ) {
-			byte[] buf = new byte[8];
-			reader.Read( buf, 0, 8 );
+			byte[] buf = reader.ReadBytes(8);
+            if (buf.Length != 8) throw new EndOfStreamException("Unexpected end of incognita grid item.");
 
 			for ( int i=0; i<data.Length; ++i ) {
 				data[i].ID = buf[i];

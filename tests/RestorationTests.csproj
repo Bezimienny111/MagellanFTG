@@ -1,0 +1,24 @@
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>RestorationTests</AssemblyName>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <Optimize Condition=" '$(Configuration)' == 'Release' ">true</Optimize>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" /><Reference Include="System.Core" />
+    <Reference Include="System.Drawing" /><Reference Include="System.Windows.Forms" />
+    <Compile Include="RestorationTests.cs" /><Compile Include="FtgIntegrationTests.cs" />
+    <ProjectReference Include="..\SharpZipLib\ICSharpCode.SharpZipLib.csproj"><Name>ICSharpCode.SharpZipLib</Name></ProjectReference>
+    <ProjectReference Include="..\EU2Edit\EU2Edit.csproj"><Name>EU2Edit</Name></ProjectReference>
+    <ProjectReference Include="..\EU2\EU2Data.csproj"><Name>EU2Data</Name></ProjectReference>
+    <ProjectReference Include="..\EU2MapCodecDev\EU2MapEditorControls\EU2MapEditorControls.csproj"><Name>EU2MapEditorControls</Name></ProjectReference>
+    <ProjectReference Include="..\Maptools\LayerPainterLib\LayerPainterLib.csproj"><Name>LayerPainterLib</Name></ProjectReference>
+    <ProjectReference Include="..\Maptools\MapToolsMapLib\MapToolsMapLib.csproj"><Name>MapToolsMapLib</Name></ProjectReference>
+    <ProjectReference Include="..\Maptools\MapExplorer\MapExplorer.csproj"><Name>MapExplorer</Name></ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

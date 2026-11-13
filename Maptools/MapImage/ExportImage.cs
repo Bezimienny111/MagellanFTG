@@ -41,11 +41,11 @@ namespace MapImage
 
 			Lightmap map = null;
 			switch ( zoom ) {
-				case 1: 
+				case 1:
 					map = file.Lightmap1; break;
-				case 2: 
+				case 2:
 					map = file.Lightmap2; break;
-				case 3: 
+				case 3:
 					map = file.Lightmap3; break;
 			}
 
@@ -62,38 +62,39 @@ namespace MapImage
 				for ( int y=0; y<map.Size.Height; y+=size ) {
 					for ( int x=0; x<map.Size.Width; x+=size ) {
 						region = new Rectangle( x, y, size, size );
-						string parttarget = Path.Combine( Path.GetDirectoryName( target ), 
-							Path.GetFileNameWithoutExtension( target ) + 
+						string parttarget = Path.Combine( Path.GetDirectoryName( target ),
+							Path.GetFileNameWithoutExtension( target ) +
 							String.Format( "-[{0},{1}-{2},{3}]", region.Left, region.Top, region.Right, region.Bottom ) +
 							Path.GetExtension( target ) );
-						DoExport( map, region, pngLevel, file.IDMap, Path.GetFileName( source ), parttarget ); 
+						DoExport( map, region, pngLevel, file.IDMap, Path.GetFileName( source ), parttarget );
 					}
 				}
 			}
 			else if ( mode == RegionMode.Full ) {
 				Console.WriteLine( "Exporting full map as one file." );
 				region = new Rectangle( new Point( 0, 0 ), map.Size );
-				DoExport( map, region, pngLevel, file.IDMap, Path.GetFileName( source ), target ); 
+				DoExport( map, region, pngLevel, file.IDMap, Path.GetFileName( source ), target );
 			}
 			else {
 				Console.WriteLine( "Exporting map region: ({0},{1})-({2},{3}) (width={4}, height={5}).", region.Left, region.Top, region.Right, region.Bottom, region.Width, region.Height );
-                DoExport(map, region, pngLevel, file.IDMap, Path.GetFileName(source), target); 
+                DoExport(map, region, pngLevel, file.IDMap, Path.GetFileName(source), target);
 			}
 
 			Console.Write( "Export successful." );
 		}
 
 		private static void DoExport( Lightmap map, Rectangle region, PngLevel pngLevel, IDMap idmap, string sourcefile, string target ) {
-			Console.WriteLine( "Decoding image..." );
+			IIDConvertor exportConvertor=map.Profile.IsFtg || map.Profile.ProvinceCount>4096 ? (IIDConvertor)new FtgIDConvertor() : Boot.DefaultConvertor;
+            Console.WriteLine( "Decoding image..." );
 			RawImage rawimg = map.DecodeImage( region );
 			int[] shadebuffer, idbuffer, borderbuffer;
-			new IOShader( Boot.DefaultConvertor ).MultiShade32( rawimg, out shadebuffer, out idbuffer, out borderbuffer );
+			new IOShader( exportConvertor ).MultiShade32( rawimg, out shadebuffer, out idbuffer, out borderbuffer );
 
-			// We don't use the lightmap version as a source: this can lead to errors. 
+			// We don't use the lightmap version as a source: this can lead to errors.
 			// Use the idmap as source. For lightmap2 and lightmap3, this needs to be scaled down.
 			// -- NOTE: if this is changed, don't forget to turn on the id converting in the IOShader.Multishade above!
 			ushort[] tmpbuffer = null;
-				
+
 			if ( map.Zoom == 0 ) {
 				tmpbuffer = idmap.ExportBitmapBuffer( rawimg.Bounds );
 			}
@@ -104,8 +105,8 @@ namespace MapImage
 
 			// Convert it to the map format
 			for ( int i=0; i<idbuffer.Length; ++i ) {
-				if ( tmpbuffer[i] >= Province.Count ) tmpbuffer[i] = Province.TerraIncognitaID;
-				idbuffer[i] = Boot.DefaultConvertor.ConvertID( tmpbuffer[i] );
+				if ( tmpbuffer[i] >= idmap.Profile.ProvinceIDThreshold ) tmpbuffer[i] = Province.TerraIncognitaID;
+				idbuffer[i] = exportConvertor.ConvertID( tmpbuffer[i] );
 			}
 
 			if ( pngLevel != PngLevel.None ) {
@@ -134,7 +135,7 @@ namespace MapImage
 
 				PSD.File psd = new PSD.File( rawimg.Size );
 
-				Bitmap img = new MapInfo( map.Zoom, rawimg.Location, rawimg.Size, sourcefile, Path.GetFileName( target ), Boot.DefaultConvertor ).AsBitmap();
+				Bitmap img = new MapInfo( map.Zoom, rawimg.Location, rawimg.Size, sourcefile, Path.GetFileName( target ), exportConvertor ).AsBitmap();
 				PSD.Layer l = psd.Layers.Add( new PSD.Layer( Boot.MapInfoLayerName, 0, 0, img ) );
 				l.Opacity = 255;
 				l.Visible = false;

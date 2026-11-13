@@ -46,6 +46,7 @@ namespace MapColor
 
 			ddlConvertor.Items.Add( new Inferis1IDConvertor() );
 			ddlConvertor.Items.Add( new Inferis2IDConvertor() );
+            ddlConvertor.Items.Add(new FtgIDConvertor());
 			ddlConvertor.Items.Add( new NathanSynIDConvertor() );
 			ddlConvertor.SelectedIndex = 1;
 		}
@@ -103,9 +104,9 @@ namespace MapColor
 			((System.ComponentModel.ISupportInitialize)(this.nudGreen)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudRed)).BeginInit();
 			this.SuspendLayout();
-			// 
+			//
 			// gbID
-			// 
+			//
 			this.gbID.Controls.Add(this.lblError);
 			this.gbID.Controls.Add(this.tbID);
 			this.gbID.Controls.Add(this.panel1);
@@ -115,9 +116,9 @@ namespace MapColor
 			this.gbID.TabIndex = 0;
 			this.gbID.TabStop = false;
 			this.gbID.Text = "ID";
-			// 
+			//
 			// lblError
-			// 
+			//
 			this.lblError.AutoSize = true;
 			this.lblError.BackColor = System.Drawing.SystemColors.Control;
 			this.lblError.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
@@ -128,9 +129,9 @@ namespace MapColor
 			this.lblError.TabIndex = 3;
 			this.lblError.Text = "!!!";
 			this.lblError.Visible = false;
-			// 
+			//
 			// tbID
-			// 
+			//
 			this.tbID.Location = new System.Drawing.Point(8, 20);
 			this.tbID.Name = "tbID";
 			this.tbID.Size = new System.Drawing.Size(92, 21);
@@ -138,9 +139,9 @@ namespace MapColor
 			this.tbID.Text = "0";
 			this.tbID.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbID_KeyDown);
 			this.tbID.TextChanged += new System.EventHandler(this.tbID_TextChanged);
-			// 
+			//
 			// panel1
-			// 
+			//
 			this.panel1.BackColor = System.Drawing.SystemColors.Window;
 			this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.panel1.Controls.Add(this.pbID);
@@ -149,9 +150,9 @@ namespace MapColor
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(92, 80);
 			this.panel1.TabIndex = 1;
-			// 
+			//
 			// pbID
-			// 
+			//
 			this.pbID.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.pbID.Location = new System.Drawing.Point(2, 2);
 			this.pbID.Name = "pbID";
@@ -159,9 +160,9 @@ namespace MapColor
 			this.pbID.TabIndex = 0;
 			this.pbID.TabStop = false;
 			this.pbID.Paint += new System.Windows.Forms.PaintEventHandler(this.pbID_Paint);
-			// 
+			//
 			// gbRGB
-			// 
+			//
 			this.gbRGB.Controls.Add(this.label5);
 			this.gbRGB.Controls.Add(this.tbRGB);
 			this.gbRGB.Controls.Add(this.label1);
@@ -179,9 +180,9 @@ namespace MapColor
 			this.gbRGB.TabIndex = 3;
 			this.gbRGB.TabStop = false;
 			this.gbRGB.Text = "RGB";
-			// 
+			//
 			// label5
-			// 
+			//
 			this.label5.AutoSize = true;
 			this.label5.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.label5.Location = new System.Drawing.Point(20, 24);
@@ -189,18 +190,18 @@ namespace MapColor
 			this.label5.Size = new System.Drawing.Size(29, 17);
 			this.label5.TabIndex = 14;
 			this.label5.Text = "RGB";
-			// 
+			//
 			// tbRGB
-			// 
+			//
 			this.tbRGB.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
 			this.tbRGB.Location = new System.Drawing.Point(56, 20);
 			this.tbRGB.Name = "tbRGB";
 			this.tbRGB.Size = new System.Drawing.Size(44, 21);
 			this.tbRGB.TabIndex = 13;
 			this.tbRGB.Text = "000000";
-			// 
+			//
 			// label1
-			// 
+			//
 			this.label1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.label1.ForeColor = System.Drawing.Color.Red;
 			this.label1.Location = new System.Drawing.Point(8, 56);
@@ -209,9 +210,9 @@ namespace MapColor
 			this.label1.TabIndex = 6;
 			this.label1.Text = "red";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
+			//
 			// trbGreen
-			// 
+			//
 			this.trbGreen.LargeChange = 51;
 			this.trbGreen.Location = new System.Drawing.Point(48, 96);
 			this.trbGreen.Maximum = 255;
@@ -220,9 +221,9 @@ namespace MapColor
 			this.trbGreen.TabIndex = 9;
 			this.trbGreen.TickFrequency = 51;
 			this.trbGreen.ValueChanged += new System.EventHandler(this.trbRGB_ValueChanged);
-			// 
+			//
 			// trbRed
-			// 
+			//
 			this.trbRed.LargeChange = 51;
 			this.trbRed.Location = new System.Drawing.Point(48, 52);
 			this.trbRed.Maximum = 255;
@@ -231,9 +232,9 @@ namespace MapColor
 			this.trbRed.TabIndex = 8;
 			this.trbRed.TickFrequency = 51;
 			this.trbRed.ValueChanged += new System.EventHandler(this.trbRGB_ValueChanged);
-			// 
+			//
 			// trbBlue
-			// 
+			//
 			this.trbBlue.LargeChange = 51;
 			this.trbBlue.Location = new System.Drawing.Point(48, 140);
 			this.trbBlue.Maximum = 255;
@@ -242,9 +243,9 @@ namespace MapColor
 			this.trbBlue.TabIndex = 7;
 			this.trbBlue.TickFrequency = 51;
 			this.trbBlue.ValueChanged += new System.EventHandler(this.trbRGB_ValueChanged);
-			// 
+			//
 			// nudBlue
-			// 
+			//
 			this.nudBlue.Hexadecimal = true;
 			this.nudBlue.Location = new System.Drawing.Point(208, 144);
 			this.nudBlue.Maximum = new System.Decimal(new int[] {
@@ -257,9 +258,9 @@ namespace MapColor
 			this.nudBlue.TabIndex = 2;
 			this.nudBlue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			this.nudBlue.ValueChanged += new System.EventHandler(this.nudRGB_ValueChanged);
-			// 
+			//
 			// nudGreen
-			// 
+			//
 			this.nudGreen.Hexadecimal = true;
 			this.nudGreen.Location = new System.Drawing.Point(208, 100);
 			this.nudGreen.Maximum = new System.Decimal(new int[] {
@@ -272,9 +273,9 @@ namespace MapColor
 			this.nudGreen.TabIndex = 1;
 			this.nudGreen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			this.nudGreen.ValueChanged += new System.EventHandler(this.nudRGB_ValueChanged);
-			// 
+			//
 			// nudRed
-			// 
+			//
 			this.nudRed.Hexadecimal = true;
 			this.nudRed.Location = new System.Drawing.Point(208, 56);
 			this.nudRed.Maximum = new System.Decimal(new int[] {
@@ -287,9 +288,9 @@ namespace MapColor
 			this.nudRed.TabIndex = 0;
 			this.nudRed.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			this.nudRed.ValueChanged += new System.EventHandler(this.nudRGB_ValueChanged);
-			// 
+			//
 			// label3
-			// 
+			//
 			this.label3.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.label3.ForeColor = System.Drawing.Color.Blue;
 			this.label3.Location = new System.Drawing.Point(8, 144);
@@ -298,9 +299,9 @@ namespace MapColor
 			this.label3.TabIndex = 5;
 			this.label3.Text = "blue";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
+			//
 			// label2
-			// 
+			//
 			this.label2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.label2.ForeColor = System.Drawing.Color.ForestGreen;
 			this.label2.Location = new System.Drawing.Point(4, 100);
@@ -309,36 +310,36 @@ namespace MapColor
 			this.label2.TabIndex = 4;
 			this.label2.Text = "green";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
+			//
 			// cbTopMost
-			// 
+			//
 			this.cbTopMost.Location = new System.Drawing.Point(320, 204);
 			this.cbTopMost.Name = "cbTopMost";
 			this.cbTopMost.Size = new System.Drawing.Size(100, 24);
 			this.cbTopMost.TabIndex = 4;
 			this.cbTopMost.Text = "Always On Top";
 			this.cbTopMost.CheckedChanged += new System.EventHandler(this.cbTopMost_CheckedChanged);
-			// 
+			//
 			// ddlConvertor
-			// 
+			//
 			this.ddlConvertor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ddlConvertor.Location = new System.Drawing.Point(88, 204);
 			this.ddlConvertor.Name = "ddlConvertor";
 			this.ddlConvertor.Size = new System.Drawing.Size(208, 21);
 			this.ddlConvertor.TabIndex = 5;
 			this.ddlConvertor.SelectedIndexChanged += new System.EventHandler(this.ddlConvertor_SelectedIndexChanged);
-			// 
+			//
 			// label4
-			// 
+			//
 			this.label4.AutoSize = true;
 			this.label4.Location = new System.Drawing.Point(8, 208);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(73, 17);
 			this.label4.TabIndex = 6;
 			this.label4.Text = "ID Convertor:";
-			// 
+			//
 			// ColorForm
-			// 
+			//
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 14);
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.ClientSize = new System.Drawing.Size(422, 229);
@@ -373,7 +374,7 @@ namespace MapColor
 
 		private void nudRGB_ValueChanged(object sender, System.EventArgs e) {
 			if ( cancelEvents ) return;
-		
+
 			cancelEvents = true;
 			RGB2ID();
 			cancelEvents = false;
@@ -381,7 +382,7 @@ namespace MapColor
 
 		private void trbRGB_ValueChanged(object sender, System.EventArgs e) {
 			if ( cancelEvents ) return;
-		
+
 			cancelEvents = true;
 
 			nudRed.Value = trbRed.Value;
@@ -394,7 +395,7 @@ namespace MapColor
 
 		private void tbID_TextChanged(object sender, System.EventArgs e) {
 			if ( cancelEvents ) return;
-		
+
 			cancelEvents = true;
 			ID2RGB();
 			cancelEvents = false;
@@ -411,9 +412,9 @@ namespace MapColor
 				return;
 			}
 
-			if ( e.KeyCode == Keys.Down && id <= EU2.Data.Province.MaxValue ) 
+			if ( e.KeyCode == Keys.Down && id <= (ushort.MaxValue-1) )
 				tbID.Text = (id+1).ToString();
-			else if ( e.KeyCode == Keys.Up && id > 0 ) 
+			else if ( e.KeyCode == Keys.Up && id > 0 )
 				tbID.Text = (id-1).ToString();
 		}
 
@@ -428,7 +429,7 @@ namespace MapColor
 			tbID.Text = rgb.ToString();
 			pbID.Refresh();
 			lblError.Text = "Invalid ID!";
-			lblError.Visible = rgb < 0 || rgb > EU2.Data.Province.MaxValue;
+			lblError.Visible = rgb < 0 || rgb > (ushort.MaxValue-1);
 		}
 
 		private void ID2RGB() {
@@ -441,7 +442,7 @@ namespace MapColor
 			catch {
 			}
 			lblError.Text = "Invalid ID!";
-			lblError.Visible = id < 0 || id > EU2.Data.Province.MaxValue;
+			lblError.Visible = id < 0 || id > (ushort.MaxValue-1);
 			pbID.Refresh();
 
 			int rgb = ((IIDConvertor)ddlConvertor.Items[ddlConvertor.SelectedIndex]).ConvertID( id );

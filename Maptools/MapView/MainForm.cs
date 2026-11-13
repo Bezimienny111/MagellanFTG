@@ -85,7 +85,7 @@ namespace MapView
 		{
 			if( disposing )
 			{
-				if (components != null) 
+				if (components != null)
 				{
 					components.Dispose();
 				}
@@ -151,9 +151,9 @@ namespace MapView
             ((System.ComponentModel.ISupportInitialize)(this.sbpStatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sbpTracker)).BeginInit();
             this.SuspendLayout();
-            // 
+            //
             // rootPanel
-            // 
+            //
             this.rootPanel.Controls.Add(this.panel3);
             this.rootPanel.Controls.Add(this.panel2);
             this.rootPanel.Controls.Add(this.sbStatus);
@@ -162,9 +162,9 @@ namespace MapView
             this.rootPanel.Name = "rootPanel";
             this.rootPanel.Size = new System.Drawing.Size(707, 479);
             this.rootPanel.TabIndex = 1;
-            // 
+            //
             // panel3
-            // 
+            //
             this.panel3.Controls.Add(this.mapView1);
             this.panel3.Controls.Add(this.toolStrip1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -173,9 +173,9 @@ namespace MapView
             this.panel3.Padding = new System.Windows.Forms.Padding(4, 0, 0, 0);
             this.panel3.Size = new System.Drawing.Size(539, 459);
             this.panel3.TabIndex = 7;
-            // 
+            //
             // mapView1
-            // 
+            //
             this.mapView1.CoordinatesColor = System.Drawing.Color.Brown;
             this.mapView1.CoordinatesFont = new System.Drawing.Font("Tahoma", 6F);
             this.mapView1.DatelineColor = System.Drawing.Color.DarkViolet;
@@ -199,9 +199,9 @@ namespace MapView
             this.mapView1.TrackerMoved += new EU2MapEditorControls.LayeredMapView.TrackerMovedEventHandler(this.mapView1_TrackerMoved);
             this.mapView1.SelectionChanged += new EU2MapEditorControls.LayeredMapView.SelectionChangedHandler(this.mapView1_SelectionChanged);
             this.mapView1.ContextMenu += new EU2MapEditorControls.LayeredMapView.ContextMenuEventHandler(this.mapView1_ContextMenu);
-            // 
+            //
             // pbMini
-            // 
+            //
             this.pbMini.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pbMini.Image = ((System.Drawing.Image)(resources.GetObject("pbMini.Image")));
             this.pbMini.Location = new System.Drawing.Point(4, 4);
@@ -210,9 +210,9 @@ namespace MapView
             this.pbMini.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pbMini.TabIndex = 3;
             this.pbMini.TabStop = false;
-            // 
+            //
             // toolStrip1
-            // 
+            //
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MapIDsDiffButton,
@@ -234,9 +234,9 @@ namespace MapView
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(535, 25);
             this.toolStrip1.TabIndex = 7;
-            // 
+            //
             // MapIDsDiffButton
-            // 
+            //
             this.MapIDsDiffButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.MapIDsDiffButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.MapIDsDiffButton.Image = ((System.Drawing.Image)(resources.GetObject("MapIDsDiffButton.Image")));
@@ -245,9 +245,9 @@ namespace MapView
             this.MapIDsDiffButton.Size = new System.Drawing.Size(23, 22);
             this.MapIDsDiffButton.Text = "IDs (Diff)";
             this.MapIDsDiffButton.Click += new System.EventHandler(this.MapIDsDiffButton_Click);
-            // 
+            //
             // MapIDsFileButton
-            // 
+            //
             this.MapIDsFileButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.MapIDsFileButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.MapIDsFileButton.Image = ((System.Drawing.Image)(resources.GetObject("MapIDsFileButton.Image")));
@@ -256,9 +256,9 @@ namespace MapView
             this.MapIDsFileButton.Size = new System.Drawing.Size(23, 22);
             this.MapIDsFileButton.Text = "IDs (File)";
             this.MapIDsFileButton.Click += new System.EventHandler(this.MapIDsFileButton_Click);
-            // 
+            //
             // MapIDsLightmapButton
-            // 
+            //
             this.MapIDsLightmapButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.MapIDsLightmapButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.MapIDsLightmapButton.Image = ((System.Drawing.Image)(resources.GetObject("MapIDsLightmapButton.Image")));
@@ -267,9 +267,9 @@ namespace MapView
             this.MapIDsLightmapButton.Size = new System.Drawing.Size(23, 22);
             this.MapIDsLightmapButton.Text = "IDs (Lightmap)";
             this.MapIDsLightmapButton.Click += new System.EventHandler(this.MapIDsLightmapButton_Click);
-            // 
+            //
             // MapNormalButton
-            // 
+            //
             this.MapNormalButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.MapNormalButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.MapNormalButton.Image = ((System.Drawing.Image)(resources.GetObject("MapNormalButton.Image")));
@@ -278,23 +278,23 @@ namespace MapView
             this.MapNormalButton.Size = new System.Drawing.Size(23, 22);
             this.MapNormalButton.Text = "Normal";
             this.MapNormalButton.Click += new System.EventHandler(this.MapNormalButton_Click);
-            // 
+            //
             // toolStripLabel1
-            // 
+            //
             this.toolStripLabel1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel1.Name = "toolStripLabel1";
             this.toolStripLabel1.Size = new System.Drawing.Size(35, 22);
             this.toolStripLabel1.Text = "View:";
-            // 
+            //
             // fileLabel
-            // 
+            //
             this.fileLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fileLabel.Name = "fileLabel";
             this.fileLabel.Size = new System.Drawing.Size(16, 22);
             this.fileLabel.Text = "...";
-            // 
+            //
             // ReloadButton
-            // 
+            //
             this.ReloadButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.ReloadButton.Image = ((System.Drawing.Image)(resources.GetObject("ReloadButton.Image")));
             this.ReloadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -302,14 +302,14 @@ namespace MapView
             this.ReloadButton.Size = new System.Drawing.Size(23, 22);
             this.ReloadButton.Text = "Reload";
             this.ReloadButton.Click += new System.EventHandler(this.ReloadButton_Click);
-            // 
+            //
             // toolStripSeparator1
-            // 
+            //
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
+            //
             // ScreenshotButton
-            // 
+            //
             this.ScreenshotButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.ScreenshotButton.Image = ((System.Drawing.Image)(resources.GetObject("ScreenshotButton.Image")));
             this.ScreenshotButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -317,9 +317,9 @@ namespace MapView
             this.ScreenshotButton.Size = new System.Drawing.Size(23, 22);
             this.ScreenshotButton.Text = "Screenshot";
             this.ScreenshotButton.Click += new System.EventHandler(this.ScreenshotButton_Click);
-            // 
+            //
             // RefreshButton
-            // 
+            //
             this.RefreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.RefreshButton.Image = ((System.Drawing.Image)(resources.GetObject("RefreshButton.Image")));
             this.RefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -327,9 +327,9 @@ namespace MapView
             this.RefreshButton.Size = new System.Drawing.Size(23, 22);
             this.RefreshButton.Text = "Refresh";
             this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
-            // 
+            //
             // panel2
-            // 
+            //
             this.panel2.Controls.Add(this.pbMini);
             this.panel2.Controls.Add(this.lblGoto);
             this.panel2.Controls.Add(this.tbProvID);
@@ -340,9 +340,9 @@ namespace MapView
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(168, 459);
             this.panel2.TabIndex = 2;
-            // 
+            //
             // lblGoto
-            // 
+            //
             this.lblGoto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblGoto.AutoSize = true;
             this.lblGoto.Location = new System.Drawing.Point(4, 82);
@@ -350,9 +350,9 @@ namespace MapView
             this.lblGoto.Size = new System.Drawing.Size(103, 13);
             this.lblGoto.TabIndex = 2;
             this.lblGoto.Text = "Go to Province (ID):";
-            // 
+            //
             // tbProvID
-            // 
+            //
             this.tbProvID.AcceptsReturn = true;
             this.tbProvID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tbProvID.Font = new System.Drawing.Font("Tahoma", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -365,9 +365,9 @@ namespace MapView
             this.tbProvID.WordWrap = false;
             this.tbProvID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbProvID_KeyPress);
             this.tbProvID.TextChanged += new System.EventHandler(this.tbProvID_TextChanged);
-            // 
+            //
             // groupBox2
-            // 
+            //
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.overlayHoverCheckBox);
             this.groupBox2.Controls.Add(this.overlayProvinceCheckBox);
@@ -381,9 +381,9 @@ namespace MapView
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "groupBox2";
-            // 
+            //
             // overlayHoverCheckBox
-            // 
+            //
             this.overlayHoverCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.overlayHoverCheckBox.Checked = true;
@@ -395,9 +395,9 @@ namespace MapView
             this.overlayHoverCheckBox.TabIndex = 11;
             this.overlayHoverCheckBox.Text = "Hover only";
             this.overlayHoverCheckBox.Visible = false;
-            // 
+            //
             // overlayProvinceCheckBox
-            // 
+            //
             this.overlayProvinceCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.overlayProvinceCheckBox.Location = new System.Drawing.Point(104, 155);
@@ -406,9 +406,9 @@ namespace MapView
             this.overlayProvinceCheckBox.TabIndex = 10;
             this.overlayProvinceCheckBox.Text = "Overlay province info";
             this.overlayProvinceCheckBox.CheckedChanged += new System.EventHandler(this.overlayProvinceCheckBox_CheckedChanged);
-            // 
+            //
             // RegionOverlapCheckbox
-            // 
+            //
             this.RegionOverlapCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.RegionOverlapCheckbox.Location = new System.Drawing.Point(123, 125);
@@ -417,9 +417,9 @@ namespace MapView
             this.RegionOverlapCheckbox.TabIndex = 9;
             this.RegionOverlapCheckbox.Text = "Including overlap areas";
             this.RegionOverlapCheckbox.CheckedChanged += new System.EventHandler(this.RegionOverlapCheckbox_CheckedChanged);
-            // 
+            //
             // DrawRegionsCheckbox
-            // 
+            //
             this.DrawRegionsCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.DrawRegionsCheckbox.Checked = true;
@@ -430,9 +430,9 @@ namespace MapView
             this.DrawRegionsCheckbox.TabIndex = 8;
             this.DrawRegionsCheckbox.Text = "Show Region Borders";
             this.DrawRegionsCheckbox.CheckedChanged += new System.EventHandler(this.DrawRegionsCheckbox_CheckedChanged);
-            // 
+            //
             // groupBox1
-            // 
+            //
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.rbGridFull);
@@ -445,18 +445,18 @@ namespace MapView
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Grid";
-            // 
+            //
             // rbGridFull
-            // 
+            //
             this.rbGridFull.Location = new System.Drawing.Point(114, 16);
             this.rbGridFull.Name = "rbGridFull";
             this.rbGridFull.Size = new System.Drawing.Size(42, 20);
             this.rbGridFull.TabIndex = 2;
             this.rbGridFull.Text = "Full";
             this.rbGridFull.CheckedChanged += new System.EventHandler(this.rbGridFull_CheckedChanged);
-            // 
+            //
             // rbGridNear
-            // 
+            //
             this.rbGridNear.Checked = true;
             this.rbGridNear.Location = new System.Drawing.Point(60, 16);
             this.rbGridNear.Name = "rbGridNear";
@@ -465,18 +465,18 @@ namespace MapView
             this.rbGridNear.TabStop = true;
             this.rbGridNear.Text = "Near";
             this.rbGridNear.CheckedChanged += new System.EventHandler(this.rbGridNear_CheckedChanged);
-            // 
+            //
             // rbGridNone
-            // 
+            //
             this.rbGridNone.Location = new System.Drawing.Point(4, 16);
             this.rbGridNone.Name = "rbGridNone";
             this.rbGridNone.Size = new System.Drawing.Size(52, 20);
             this.rbGridNone.TabIndex = 0;
             this.rbGridNone.Text = "None";
             this.rbGridNone.CheckedChanged += new System.EventHandler(this.rbGridNone_CheckedChanged);
-            // 
+            //
             // cbCoordinates
-            // 
+            //
             this.cbCoordinates.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.cbCoordinates.Location = new System.Drawing.Point(19, 38);
@@ -485,9 +485,9 @@ namespace MapView
             this.cbCoordinates.TabIndex = 5;
             this.cbCoordinates.Text = "Draw Block Coordinates";
             this.cbCoordinates.CheckedChanged += new System.EventHandler(this.cbGrid_CheckedChanged);
-            // 
+            //
             // cbBorders
-            // 
+            //
             this.cbBorders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.cbBorders.Location = new System.Drawing.Point(104, 76);
@@ -496,9 +496,9 @@ namespace MapView
             this.cbBorders.TabIndex = 4;
             this.cbBorders.Text = "Draw Borders";
             this.cbBorders.CheckedChanged += new System.EventHandler(this.cbBorders_CheckedChanged);
-            // 
+            //
             // groupBox3
-            // 
+            //
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Location = new System.Drawing.Point(-112, -76);
             this.groupBox3.Name = "groupBox3";
@@ -507,9 +507,9 @@ namespace MapView
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "groupBox3";
             this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
-            // 
+            //
             // sbStatus
-            // 
+            //
             this.sbStatus.Location = new System.Drawing.Point(0, 459);
             this.sbStatus.Name = "sbStatus";
             this.sbStatus.Panels.AddRange(new System.Windows.Forms.StatusBarPanel[] {
@@ -520,43 +520,43 @@ namespace MapView
             this.sbStatus.TabIndex = 4;
             this.sbStatus.Text = "statusBar1";
             this.sbStatus.PanelClick += new System.Windows.Forms.StatusBarPanelClickEventHandler(this.sbStatus_PanelClick);
-            // 
+            //
             // sbpStatus
-            // 
+            //
             this.sbpStatus.AutoSize = System.Windows.Forms.StatusBarPanelAutoSize.Spring;
             this.sbpStatus.BorderStyle = System.Windows.Forms.StatusBarPanelBorderStyle.None;
             this.sbpStatus.MinWidth = 200;
             this.sbpStatus.Name = "sbpStatus";
             this.sbpStatus.Width = 536;
-            // 
+            //
             // sbpTracker
-            // 
+            //
             this.sbpTracker.Alignment = System.Windows.Forms.HorizontalAlignment.Center;
             this.sbpTracker.MinWidth = 154;
             this.sbpTracker.Name = "sbpTracker";
             this.sbpTracker.Text = "tracker";
             this.sbpTracker.Width = 154;
-            // 
+            //
             // cmMap
-            // 
+            //
             this.cmMap.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItem1,
             this.miVisBlock});
-            // 
+            //
             // menuItem1
-            // 
+            //
             this.menuItem1.Index = 0;
             this.menuItem1.Text = "Export \"mimage /E\" commandline to clipboard";
             this.menuItem1.Click += new System.EventHandler(this.menuItem1_Click);
-            // 
+            //
             // miVisBlock
-            // 
+            //
             this.miVisBlock.Index = 1;
             this.miVisBlock.Text = "Visualise Block";
             this.miVisBlock.Click += new System.EventHandler(this.miVisBlock_Click);
-            // 
+            //
             // Zoom3Button
-            // 
+            //
             this.Zoom3Button.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.Zoom3Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.Zoom3Button.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -566,9 +566,9 @@ namespace MapView
             this.Zoom3Button.Size = new System.Drawing.Size(23, 22);
             this.Zoom3Button.Text = "3";
             this.Zoom3Button.Click += new System.EventHandler(this.Zoom3Button_Click);
-            // 
+            //
             // Zoom2Button
-            // 
+            //
             this.Zoom2Button.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.Zoom2Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.Zoom2Button.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -578,9 +578,9 @@ namespace MapView
             this.Zoom2Button.Size = new System.Drawing.Size(23, 22);
             this.Zoom2Button.Text = "2";
             this.Zoom2Button.Click += new System.EventHandler(this.Zoom2Button_Click);
-            // 
+            //
             // Zoom1Button
-            // 
+            //
             this.Zoom1Button.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.Zoom1Button.Checked = true;
             this.Zoom1Button.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -592,16 +592,16 @@ namespace MapView
             this.Zoom1Button.Size = new System.Drawing.Size(23, 22);
             this.Zoom1Button.Text = "1";
             this.Zoom1Button.Click += new System.EventHandler(this.Zoom1Button_Click);
-            // 
+            //
             // toolStripLabel2
-            // 
+            //
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
             this.toolStripLabel2.Size = new System.Drawing.Size(39, 22);
             this.toolStripLabel2.Text = "Zoom:";
-            // 
+            //
             // MainForm
-            // 
+            //
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 14);
             this.ClientSize = new System.Drawing.Size(707, 479);
             this.Controls.Add(this.rootPanel);
@@ -679,7 +679,7 @@ namespace MapView
 			ReloadButton.Enabled = false;
 			sbpStatus.Text = "Loading file...";
 			Application.DoEvents();
- 
+
 			file = null;
 			rootPanel.Enabled = false;
 			mapView1.ShowLoading = true;
@@ -699,7 +699,7 @@ namespace MapView
 			}
 
 			System.Threading.Thread.Sleep(100);
-			
+
 			this.Invoke(new InvokeDelegate(loadFile_done));
 		}
 
@@ -719,8 +719,8 @@ namespace MapView
 							    Application.Exit();
 							    return;
 						    }
-						    if ( file.BoundBoxes == null ) 
-							    file.BoundBoxes = new EU2.Map.BoundBoxes( file.IDMap.CalculateBoundBoxes() );
+						    if ( file.BoundBoxes == null )
+							    file.BoundBoxes = new EU2.Map.BoundBoxes( file.IDMap.CalculateBoundBoxes(),file.Profile );
 
                             mapView1.LightmapDimensions = layer[useMap];
 
@@ -733,7 +733,7 @@ namespace MapView
                             Zoom3Button.Checked = false;
                             if (useMap == 3)
                                 Zoom3Button.Checked = true;
-                            else if (useMap == 2) 
+                            else if (useMap == 2)
                                 Zoom2Button.Checked = true;
                             else
                                 Zoom1Button.Checked = true;
@@ -801,7 +801,7 @@ namespace MapView
 			catch {
 			}
 
-			if ( id <= 0 || id > EU2.Data.Province.MaxID ) {
+			if ( id <= 0 || id > file.Profile.LastPlayableID ) {
 				tbProvID.ForeColor = Color.Red;
 			}
 			else {
@@ -813,23 +813,23 @@ namespace MapView
 
 		private void MainForm_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e) {
 			switch ( e.KeyCode ) {
-				case Keys.Left: 
+				case Keys.Left:
 					mapView1.MoveMapBy( -EU2.Map.Lightmap.BlockSize, 0 );
 					break;
-				case Keys.Right: 
+				case Keys.Right:
 					mapView1.MoveMapBy( EU2.Map.Lightmap.BlockSize, 0 );
 					break;
-				case Keys.Up: 
+				case Keys.Up:
 					mapView1.MoveMapBy( 0, -EU2.Map.Lightmap.BlockSize );
 					break;
-				case Keys.Down: 
+				case Keys.Down:
 					mapView1.MoveMapBy( 0, EU2.Map.Lightmap.BlockSize );
 					break;
 			}
 		}
 
 		private void tbProvID_TextChanged(object sender, System.EventArgs e) {
-		
+
 		}
 
 		private void cbBorders_CheckedChanged(object sender, System.EventArgs e) {
@@ -860,8 +860,8 @@ namespace MapView
 		}
 
 		private void menuItem1_Click(object sender, System.EventArgs e) {
-			Clipboard.SetDataObject( String.Format( 
-				"{5} /e \"{4}\" /r:{0},{1},{2},{3} /1", 
+			Clipboard.SetDataObject( String.Format(
+				"{5} /e \"{4}\" /r:{0},{1},{2},{3} /1",
 				mapView1.Selection.X, mapView1.Selection.Y, mapView1.Selection.Width, mapView1.Selection.Height,
                 fileLabel.ToolTipText, EU2.Data.Province.MaxValue > 2000 ? "mimage" : "mximage"), true);
 			MessageBox.Show( this, "Done!", "Success" );
@@ -872,7 +872,7 @@ namespace MapView
 
             //MapToolsLib.BlockVisualiser visualiser = new MapToolsLib.BlockVisualiser( file.ColorScales, file.Provinces );
             //visualiser.WalkTree( painter[painter.CurrentSource].GetDecompressedBlock( cmblockindex ) );
-			
+
             //BlockVisForm form = new BlockVisForm();
             //form.Visuals = visualiser.Result;
             //form.ShowDialog( this );
@@ -910,11 +910,11 @@ namespace MapView
 		}
 
 		private void sbStatus_PanelClick(object sender, System.Windows.Forms.StatusBarPanelClickEventArgs e) {
-		
+
 		}
 
 		private void groupBox3_Enter(object sender, System.EventArgs e) {
-		
+
 		}
 
         private void DrawRegionsCheckbox_CheckedChanged(object sender, EventArgs e) {
@@ -955,13 +955,13 @@ namespace MapView
 
         private void MapIDsLightmapButton_Click(object sender, EventArgs e) {
             MapToolsLib.LayerPainters.MapLayerPainter layer = (MapToolsLib.LayerPainters.MapLayerPainter)mapView1.Layers["Map"];
-            layer.ShaderProxy = new GenericShaderProxy(new IDShader(new MapToolsLib.Inferis2IDConvertor()));
+            layer.ShaderProxy = new GenericShaderProxy(new IDShader((file.Profile.IsFtg ? (MapToolsLib.IIDConvertor)new MapToolsLib.FtgIDConvertor() : new MapToolsLib.Inferis2IDConvertor())));
             CheckDisplayButton(sender as ToolStripButton);
         }
 
         private void MapIDsFileButton_Click(object sender, EventArgs e) {
             MapToolsLib.LayerPainters.MapLayerPainter layer = (MapToolsLib.LayerPainters.MapLayerPainter)mapView1.Layers["Map"];
-            layer.ShaderProxy = new GenericShaderProxy(new IDMapShader(file.IDMap, new MapToolsLib.Inferis2IDConvertor()));
+            layer.ShaderProxy = new GenericShaderProxy(new IDMapShader(file.IDMap, (file.Profile.IsFtg ? (MapToolsLib.IIDConvertor)new MapToolsLib.FtgIDConvertor() : new MapToolsLib.Inferis2IDConvertor())));
             CheckDisplayButton(sender as ToolStripButton);
         }
 

@@ -9,16 +9,31 @@ namespace EU2.Map
 	/// </summary>
 	public class AdjacencyTable : EU2.IO.IStreamWriteable {
 		private Adjacent[][] table;
+        private MapProfile profile;
+        public ProvinceList Provinces { get; set; }
+        public int RiverStart(ushort id) {
+            EnsureStorage();
+            Adjacent[] neighbours=table[id];
+            if(neighbours==null) return 0;
+            for(int i=0;i<neighbours.Length;i++)
+                if(Provinces != null && Provinces[neighbours[i].ID] != null && Provinces[neighbours[i].ID].IsRiver()) return i;
+            return neighbours.Length;
+        }
+        public MapProfile Profile { get { return profile; } set { profile=value; EnsureStorage(); } }
+        private void EnsureStorage() { if (table.Length != profile.ProvinceCount+1) Array.Resize(ref table,profile.ProvinceCount+1); }
 
-		public AdjacencyTable() {
-			table = new Adjacent[Province.MaxValue+1][];
-		}
+		public AdjacencyTable() : this(new MapProfile()) { }
+        public AdjacencyTable(MapProfile profile) { this.profile=profile; table = new Adjacent[profile.ProvinceCount+1][]; }
 
-		public AdjacencyTable( BinaryReader reader ) : this() {
+		public AdjacencyTable(BinaryReader reader, MapProfile profile) : this(profile) { ReadFrom(reader); }
+
+        public AdjacencyTable( BinaryReader reader ) : this() {
 			ReadFrom( reader );
 		}
 
-		public AdjacencyTable( string path ) : this() {
+		public AdjacencyTable(string path,MapProfile profile) : this(profile) { using(BinaryReader reader=new BinaryReader(File.OpenRead(path))) ReadFrom(reader); }
+
+        public AdjacencyTable( string path ) : this() {
 			FileStream stream = null;
 			try {
 				stream = new FileStream( path, FileMode.Open, FileAccess.Read, FileShare.Read );
@@ -30,6 +45,7 @@ namespace EU2.Map
 		}
 
 		public void Add( ushort id, Adjacent item ) {
+            profile.EnsureProvinceCount(Math.Max(id,item.ID)+1); EnsureStorage();
 			if ( table[id] == null ) {
 				table[id] = new Adjacent[1] { item };
 			}
@@ -44,10 +60,10 @@ namespace EU2.Map
 
 		public void ReadFrom( BinaryReader reader ) {
 			// Read offsets first
-			int[] offsets = new int[Province.MaxValue+1];
-			int realcount = Province.MaxValue+1;
+			int[] offsets = new int[profile.ProvinceCount+1];
+			int realcount = profile.ProvinceCount+1;
 			Adjacent first = null;
-			for ( int i=0; i<=Province.MaxValue; ++i ) {
+			for ( int i=0; i<=profile.ProvinceCount; ++i ) {
 				offsets[i] = reader.ReadInt32();
 				if ( (uint)offsets[i] == 0xCDCDCDCD ) {
 					// No longer reading offsets... Stop!
@@ -77,16 +93,17 @@ namespace EU2.Map
 		}
 
 		public void WriteTo( BinaryWriter writer ) {
+            EnsureStorage();
 			// Write offsets
 			int itemCount = 0;
-			for ( int i=0; i<Province.MaxValue+1; ++i ) {
+			for ( int i=0; i<profile.ProvinceCount+1; ++i ) {
 				writer.Write( itemCount );
 				if ( table[i] == null ) continue;
 				itemCount += table[i].Length;
 			}
 
 			// Write lists
-			for ( int i=0; i<Province.MaxValue; ++i ) {
+			for ( int i=0; i<profile.ProvinceCount; ++i ) {
 				if ( table[i] == null ) continue;
 				for ( int a=0; a<table[i].Length; ++a ) {
 					table[i][a].WriteTo( writer );
@@ -104,7 +121,8 @@ namespace EU2.Map
 		}
 
 		public int GetAdjacencyIndex( ushort fromId, ushort toId ) {
-			if ( table[fromId] == null ) return -1;
+			EnsureStorage();
+            if ( table[fromId] == null ) return -1;
 
 			for ( int i=0; i<table[fromId].Length; ++i ) {
 				if ( table[fromId][i].ID == toId ) return i;
@@ -115,11 +133,11 @@ namespace EU2.Map
 
 		public Adjacent[] this[int id] {
 			get {
-				if ( id < 0 || id > Province.Count ) throw new ArgumentOutOfRangeException();
-				return table[id];
+				if ( id < 0 || id > profile.LastProvinceID ) throw new ArgumentOutOfRangeException();
+				EnsureStorage(); return table[id];
 			}
 			set {
-				if ( id < 0 || id > Province.Count ) throw new ArgumentOutOfRangeException();
+				if ( id < 0 || id > profile.LastProvinceID ) throw new ArgumentOutOfRangeException();
 
 				table[id] = new Adjacent[value.Length];
 				value.CopyTo( table[id], 0 );
@@ -133,7 +151,7 @@ namespace EU2.Map
 		}
 
 		public ushort[] Merge( AdjacencyTable other ) {
-			int[] tagged = new int[Province.InternalCount];
+			int[] tagged = new int[profile.InternalCount];
 
 			for ( int fromId=1; fromId<other.table.Length; ++fromId ) {
 				if ( other.table[fromId] == null || other.table[fromId].Length == 0 ) continue;
@@ -142,7 +160,7 @@ namespace EU2.Map
 				table[fromId] = new Adjacent[other.table[fromId].Length];
 				other.table[fromId].CopyTo( table[fromId], 0 );
 
-				for ( int t=0; t<table[fromId].Length; ++t ) 
+				for ( int t=0; t<table[fromId].Length; ++t )
 					++tagged[table[fromId][t].ID];
 			}
 
@@ -174,7 +192,7 @@ namespace EU2.Map
 		public const int Invalid = 15;
 
 		ushort id;
-		AdjacencyType type; 
+		AdjacencyType type;
 
 		public Adjacent( ushort id, AdjacencyType type ) {
 			this.id = id;

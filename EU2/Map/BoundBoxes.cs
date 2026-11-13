@@ -11,35 +11,27 @@ namespace EU2.Map
 	/// </summary>
 	public class BoundBoxes : EU2.IO.IStreamWriteable
 	{
-		ProvinceBoundBox[] boxes;
-
-		public BoundBoxes() {
-			boxes = new ProvinceBoundBox[Province.InternalCount];
-			for ( int i=0; i<Province.MaxValue; ++i ) boxes[i] = new ProvinceBoundBox( Rectangle.Empty, (ushort)i );
-		}
-
-		public BoundBoxes( ProvinceBoundBox[] originals ) {
-			boxes = new ProvinceBoundBox[Province.InternalCount];
-			originals.CopyTo( boxes, 0 );
-		}
-
-		public BoundBoxes( BinaryReader reader ) : this() {
-			ReadFrom( reader );
-		}
-
-		public void ReadFrom( BinaryReader reader ) {
-			int i=0;
-			try {
-				for ( i=0; i<Province.MaxValue; ++i ) boxes[i].ReadFrom( reader );
-			}
-			catch ( System.IO.EndOfStreamException ) {
-				for ( ; i<Province.MaxValue; ++i ) boxes[i] = new ProvinceBoundBox( 0, 0, 0, 0, (ushort)i );
-			}
-		}
-
-		public void WriteTo( BinaryWriter writer ) {
-			for ( int i=0; i<Province.MaxValue; ++i ) boxes[i].WriteTo( writer );
-		}
+        private ProvinceBoundBox[] boxes;
+        private MapProfile profile;
+        public MapProfile Profile { get { return profile; } set { profile=value; EnsureStorage(); } }
+        public BoundBoxes() : this(new MapProfile()) { }
+        public BoundBoxes(MapProfile profile) { this.profile=profile; boxes=new ProvinceBoundBox[0]; EnsureStorage(); }
+        public BoundBoxes(ProvinceBoundBox[] originals) : this(new MapProfile(originals.Length-2,false)) { originals.CopyTo(boxes,0); }
+        public BoundBoxes(ProvinceBoundBox[] originals,MapProfile profile) : this(profile) { Array.Copy(originals,boxes,Math.Min(originals.Length,boxes.Length)); }
+        public BoundBoxes(BinaryReader reader) : this(reader,new MapProfile()) { }
+        public BoundBoxes(BinaryReader reader,MapProfile profile) : this(profile) { ReadFrom(reader); }
+        private void EnsureStorage() {
+            int old=boxes.Length; Array.Resize(ref boxes,profile.InternalCount);
+            for(int i=old;i<boxes.Length;i++) boxes[i]=new ProvinceBoundBox(Rectangle.Empty,(ushort)i);
+        }
+        public void ReadFrom(BinaryReader reader) {
+            EnsureStorage();
+            for(int i=0;i<profile.ProvinceCount;i++) boxes[i].ReadFrom(reader);
+        }
+        public void WriteTo(BinaryWriter writer) {
+            EnsureStorage();
+            for(int i=0;i<profile.ProvinceCount;i++) boxes[i].WriteTo(writer);
+        }
 
 		public void WriteTo( Stream stream ) {
 			WriteTo( new BinaryWriter( stream ) );
@@ -47,12 +39,12 @@ namespace EU2.Map
 
 		public ProvinceBoundBox this[int index] {
 			get {
-				if ( index < 0 || index > Province.MaxValue ) throw new ArgumentOutOfRangeException();
-				return boxes[index];
+				if ( index < 0 || index >= profile.InternalCount ) throw new ArgumentOutOfRangeException();
+				EnsureStorage(); return boxes[index];
 			}
 			set {
-				if ( index < 0 || index > Province.MaxValue ) throw new ArgumentOutOfRangeException();
-				boxes[index] = value;
+				if ( index < 0 || index >= profile.InternalCount ) throw new ArgumentOutOfRangeException();
+				EnsureStorage(); boxes[index] = value;
 			}
 		}
 
@@ -73,7 +65,7 @@ namespace EU2.Map
 			ArrayList resultList = new ArrayList();
 
 			for ( int i=0; i<boxes.Length; ++i ) {
-				if ( rect.IntersectsWith( boxes[i].Box ) ) resultList.Add( boxes[i] ); 
+				if ( rect.IntersectsWith( boxes[i].Box ) ) resultList.Add( boxes[i] );
 			}
 
 			ProvinceBoundBox[] result = new ProvinceBoundBox[resultList.Count];
@@ -88,12 +80,12 @@ namespace EU2.Map
 		public ProvinceBoundBox[] GetAllIntersectingWith( ProvinceBoundBox box ) {
 			return GetAllIntersectingWith( box.Box );
 		}
-		
+
 		public ProvinceBoundBox[] GetAllContainedIn( Rectangle rect ) {
 			ArrayList resultList = new ArrayList();
 
 			for ( int i=0; i<boxes.Length; ++i ) {
-				if ( rect.Contains( boxes[i].Box ) ) resultList.Add( boxes[i] ); 
+				if ( rect.Contains( boxes[i].Box ) ) resultList.Add( boxes[i] );
 			}
 
 			ProvinceBoundBox[] result = new ProvinceBoundBox[resultList.Count];

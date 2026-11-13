@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using EU2.Data;
 
 namespace EU2.Map.Codec.MapBlockHandling
@@ -17,7 +18,49 @@ namespace EU2.Map.Codec.MapBlockHandling
 
 		}
 
-		protected override void OnVisitNode( Node node, int x, int y ) {
+		private sealed class BorderValue { internal ushort Province; internal int Bits; }
+        private readonly Dictionary<long,ushort> borderKeys = new Dictionary<long,ushort>();
+        private readonly Dictionary<ushort,BorderValue> borderValues = new Dictionary<ushort,BorderValue>();
+        protected override bool AllowTemporaryOwnerIDs { get { return true; } }
+        private ushort BorderKey(ushort province,int bits) {
+            long key=((long)province<<9)|((long)bits&511);
+            ushort token;
+            if(borderKeys.TryGetValue(key,out token)) return token;
+            token=(ushort)(0x8000+borderKeys.Count);
+            borderKeys.Add(key,token); borderValues.Add(token,new BorderValue { Province=province, Bits=bits });
+            return token;
+        }
+        protected override void OnAfterWalk() {
+            base.OnAfterWalk();
+            if(borderValues.Count==0) return;
+            List<ushort> referenced=new List<ushort>();
+            foreach(ushort key in orderedIDs) {
+                BorderValue value;
+                if(borderValues.TryGetValue(key,out value) && !referenced.Contains(value.Province)) referenced.Add(value.Province);
+            }
+            if(referenced.Count>60-OwnerPadding)
+                throw new InvalidOperationException("Too many distinct border owners in one block for the FTG ID range.");
+            Dictionary<ushort,byte> remap=new Dictionary<ushort,byte>();
+            ushort[] final=new ushort[256]; int next=OwnerPadding;
+            if(OwnerPadding>0) remap.Add(0,0);
+            foreach(ushort province in referenced) { remap.Add(province,(byte)next); final[next++]=province; }
+            for(int i=OwnerPadding;i<idindex;i++) {
+                ushort key=orderedIDs[i];
+                if(!remap.ContainsKey(key)) { if(next>=256) throw new InvalidOperationException("Too many owner entries in one block."); remap.Add(key,(byte)next++); }
+            }
+            foreach(KeyValuePair<ushort,byte> entry in remap) {
+                BorderValue value;
+                final[entry.Value]=borderValues.TryGetValue(entry.Key,out value)
+                    ? (ushort)(((remap[value.Province]+4)<<9)|value.Bits) : entry.Key;
+            }
+            for(int i=0;i<leafindex;i++) owners[i]=remap[orderedIDs[owners[i]]];
+            orderedIDs=final; idindex=next; idtable=null;
+            idLookup=new Dictionary<ushort,byte>();
+            for(int i=0;i<idindex;i++) if(!idLookup.ContainsKey(final[i])) idLookup.Add(final[i],(byte)i);
+        }
+        protected override int OwnerPadding { get { return provinces.Profile.BorderPadding; } }
+
+        protected override void OnVisitNode( Node node, int x, int y ) {
 			tree[treeindex++] = node.IsBranch();
 
 			if ( node.IsBranch() && node.Level > 1 ) return;
@@ -35,7 +78,7 @@ namespace EU2.Map.Codec.MapBlockHandling
 		}
 
 		private void HandleNode( Node node, int x, int y ) {
-			ushort neighbourid = 0;	
+			ushort neighbourid = 0;
 			ushort provid = node.Data.ID;
 
             try {
@@ -46,7 +89,7 @@ namespace EU2.Map.Codec.MapBlockHandling
                     int adjx = rx + (x << zoom);
                     int adjy = ry + (y << zoom);
 
-                    ushort riverid = Province.MaxValue;
+                    ushort riverid = provinces.Profile.BorderID;
                     if (provinces[provid].IsRiver()) { // Is River, convert province id to nearest land
                         riverid = provid;
                         provid = idmap.FindClosestLand(adjx, adjy, riverid, provinces);
@@ -56,22 +99,19 @@ namespace EU2.Map.Codec.MapBlockHandling
                     if (provid != neighbourid && provid != riverid && provinces[neighbourid].IsLand()) {
                         // We have 3 things now: 2 provinces and a possible river.
                         int neighadj = adjacent.GetAdjacencyIndex(provid, neighbourid);
-                        if (neighadj >= 0 || neighadj < 16) {
+                        if (neighadj >= 0 && neighadj < 16) {
                             int riveradj = Adjacent.Invalid;
-                            if (riverid < Province.Count) { // Convert river to adjacency
+                            if (riverid < provinces.Profile.ProvinceIDThreshold) { // Convert river to adjacency
                                 riveradj = adjacent.GetAdjacencyIndex(provid, riverid);
+                                if(provinces.Profile.IsFtg && riveradj >= 0) riveradj -= adjacent.RiverStart(provid);
                             }
 
                             if (riveradj >= 0) {
-                                if (riveradj >= 16)
+                                if (riveradj >= 16 || (riverid < provinces.Profile.ProvinceIDThreshold && riveradj == Adjacent.Invalid))
                                     throw new AdjacencyIndexOutOfRangeException(provid, riverid, riveradj);
 
-                                int providx = ConvertID(provid); // Convert the province id to an index in the id table
-                                if (providx < 0 || providx + 4 >= 64)
-                                    throw new ProvinceIndexOutOfRangeException(provid, providx);
-
-                                // Store the river and the two surrounding provinces (river and land)
-                                owners[leafindex] = ConvertID((ushort)(color + (neighadj << 1) + (riveradj << 5) + ((providx + 4) << 9)));
+                                ConvertID(provid);
+                                owners[leafindex]=ConvertID(BorderKey(provid,color+(neighadj<<1)+(riveradj<<5)));
                             }
                             else {
                                 owners[leafindex] = ConvertID(riverid); // Store only the river
@@ -100,7 +140,7 @@ namespace EU2.Map.Codec.MapBlockHandling
 		private ProvinceList provinces;
 		private AdjacencyTable adjacent;
 		private IDMap idmap;
-		private int rx; 
+		private int rx;
 		private int ry;
 		#endregion
 	}

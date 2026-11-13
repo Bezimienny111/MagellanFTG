@@ -43,12 +43,12 @@ namespace MapStats
 					Console.WriteLine( "No source file specified!" );
 					return;
 				}
-				string source = pargs.Source; 
+				string source = pargs.Source;
 
 				if ( Path.GetExtension( source ) == "" ) {
 					source = Path.ChangeExtension( source, "eu2map" );
 				}
-				source = Path.GetFullPath( source ); 
+				source = Path.GetFullPath( source );
 
 				// Check if source exists
 				if ( !System.IO.File.Exists( source ) ) {
@@ -77,7 +77,7 @@ namespace MapStats
 				if ( Path.GetExtension( target ) == "" ) {
 					target = Path.ChangeExtension( target, pargs.Mode == ExportMode.XML ? "xml" : "csv" );
 				}
-				target = Path.GetFullPath( target ); 
+				target = Path.GetFullPath( target );
 
 				// Check if target exists
 				if ( System.IO.File.Exists( target ) && !pargs.Overwrite ) {
@@ -238,7 +238,7 @@ namespace MapStats
 			writer.WriteStartDocument();
 			writer.WriteStartElement("Adjacencies");
 
-			for(int i=Province.MinID; i<=Province.MaxID; ++i) {
+			for(int i=Province.MinID; i<=provinces.Profile.LastPlayableID; ++i) {
 				EU2.Map.Adjacent[] adj = adjtable[i];
 				writer.WriteStartElement("From");
 				writer.WriteAttributeString("id", i.ToString());
@@ -260,7 +260,7 @@ namespace MapStats
 		private static void WriteAdjacencies(EU2.Map.AdjacencyTable adjtable, EU2.Data.ProvinceList provinces, EU2.IO.CSVWriter writer) {
 			writer.EndRow( "fromProvinceId;fromProvinceName;toProvinceId;toProvinceName;type" );
 
-			for(int i=Province.MinID; i<=Province.MaxID; ++i) {
+			for(int i=Province.MinID; i<=provinces.Profile.LastPlayableID; ++i) {
 				EU2.Map.Adjacent[] adj = adjtable[i];
 				for(int t=0; t<adj.Length; ++t) {
 					writer.Write(i);

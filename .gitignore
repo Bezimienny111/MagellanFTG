@@ -7,3 +7,11 @@ _UpgradeReport_Files
 *.gpState
 _old
 sandbox
+*.sln.cache
+artifacts/
+
+/Start_MapTest144.cmd
+/Start_MapTest144_Diagnostic.cmd
+/tools/capture_ftg_maptest_crash.py
+
+/PLAN_EDYTORA_SCENARIUSZY_FTG.md

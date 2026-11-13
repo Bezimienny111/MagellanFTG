@@ -10,57 +10,59 @@ namespace EU2.Data
 {
 	/// <summary>
 	/// Summary description for TerrainList.
-	/// </summary> 
+	/// </summary>
 	public class ProvinceList : IEnumerable<Province>, IStreamWriteable {
-		private const int ListSize = Province.InternalCount;
-		private Province[] list;
+        private Province[] list;
+        private readonly EU2.Map.MapProfile profile;
+        private FtgProvinceDocument ftgDocument;
+        private readonly HashSet<ushort> defined = new HashSet<ushort>();
+        public EU2.Map.MapProfile Profile { get { return profile; } }
+        public bool IsFtg { get { return ftgDocument != null; } }
+        public int ProvinceCount { get { return profile.ProvinceCount; } }
 
-		public ProvinceList() {
-			list = new Province[ListSize];
-			for ( ushort i=0; i<ListSize; ++i ) list[i] = new Province( i );
+        public ProvinceList() : this(new EU2.Map.MapProfile()) { }
+        public ProvinceList(EU2.Map.MapProfile profile) {
+            this.profile = profile;
+            list = new Province[0];
+            EnsureStorage();
+        }
+        public ProvinceList(CSVReader reader) : this() { ReadFrom(reader); }
+        public ProvinceList(CSVReader reader, EU2.Map.MapProfile profile) : this(profile) { ReadFrom(reader); }
 
-			list[Province.BorderID].Terrain = Terrain.Border;
-			list[Province.BorderOutlineID].Terrain = Terrain.Border;
-		}
-
-		public ProvinceList( CSVReader reader ) {
-			list = new Province[ListSize];
-			for ( ushort i=0; i<ListSize; ++i ) list[i] = new Province( i );
-
-			ReadFrom( reader );
-
-			list[Province.BorderID].Terrain = Terrain.Border;
-			list[Province.BorderOutlineID].Terrain = Terrain.Border;
-		}
-
-		public Province this[int id] {
-			get { return GetProvince( id ); }
-			set { 
-				if ( value == null || value.ID != id ) throw new InvalidOperationException();
-				list[id] = value; 
-			}
-		}
-
-		public Province GetProvince( ushort id ) {
-			return id >= 0 && id <= list.Length ? list[id] : null;
-		}
-
-		public Province GetProvince( int id ) {
-			return GetProvince( (ushort)id );
-		}
-
-		public bool Contains( ushort id ) {
-			return (id >= 0 && id <= list.Length) && list[id] != null;
-		}
-
-		public bool Contains( Province prov ) {
-			if ( prov == null ) return false;
-			return Contains( prov.ID );
-		}
-
-		public bool Contains( int id ) {
-			return Contains( (ushort)id );
-		}
+        private void EnsureStorage() {
+            if (list.Length == profile.InternalCount) return;
+            int start = Math.Max(0,list.Length-2);
+            Array.Resize(ref list, profile.InternalCount);
+            for (int i=start;i<list.Length;i++) list[i] = new Province((ushort)i);
+            list[profile.BorderID].Terrain = Terrain.Border;
+            list[profile.BorderOutlineID].Terrain = Terrain.Border;
+        }
+        public static ProvinceList FromFtg(Stream stream, EU2.Map.MapProfile profile) {
+            FtgProvinceDocument document = FtgProvinceDocument.Read(stream);
+            profile.IsFtg = true;
+            profile.EnsureProvinceCount(document.MaximumID+1);
+            profile.SetDefinedProvinceCount(document.MaximumID+1);
+            ProvinceList result = new ProvinceList(profile);
+            result.ftgDocument = document;
+            foreach (Province province in document.Provinces) result[province.ID] = province;
+            return result;
+        }
+        public IEnumerable<Province> DefinedProvinces {
+            get { foreach (ushort id in new SortedSet<ushort>(defined)) yield return list[id]; }
+        }
+        public Province this[int id] {
+            get { return GetProvince(id); }
+            set {
+                if (value == null || value.ID != id || id < 0) throw new InvalidOperationException();
+                profile.RegisterProvinceID(id);
+                EnsureStorage(); list[id] = value; defined.Add((ushort)id);
+            }
+        }
+        public Province GetProvince(ushort id) { return GetProvince((int)id); }
+        public Province GetProvince(int id) { EnsureStorage(); return id >= 0 && id < list.Length ? list[id] : null; }
+        public bool Contains(ushort id) { return Contains((int)id); }
+        public bool Contains(int id) { return id >= 0 && id < profile.InternalCount && GetProvince(id) != null; }
+        public bool Contains(Province province) { return province != null && Contains(province.ID); }
 
 		public bool ReadFrom( CSVReader reader ) {
 			// Skip first row
@@ -68,10 +70,10 @@ namespace EU2.Data
 			bool newStyle = header.IndexOf( "ToT-SPA;ToT-POR;HRE;" ) >= 0;
 
 			reader.SkipRow();
-			for ( int i=0; i<=Province.Count; ++i ) {
+			for ( int i=0; i<profile.ProvinceCount; ++i ) {
 				Province item = new Province();
 				if ( !item.ReadFromCSV( reader, newStyle ) ) break;
-				list[item.ID] = item;
+				this[item.ID] = item;
 			}
 
 			return true;
@@ -79,12 +81,12 @@ namespace EU2.Data
 
 		public void WriteTo( CSVWriter writer ) {
 			// Write top row
-			if ( GlobalConfig.AllowTOTAndHREInProvinceList ) 
+			if ( GlobalConfig.AllowTOTAndHREInProvinceList )
 				writer.EndRow( "Id;Name;PIW name;Religion;Culture;SizeModifier;Pashas;Climate;Ice?;Storm?;Galleys;Manpower;Income;Terrain;ToT-SPA;ToT-POR;HRE;Mine(1) ?;MineValue;Goods;Uprgadable;CoT Historical Modifier;Difficulty for Colonization;Native Combat Strength;Ferocity;Efficiency of Natives in combat;Negotiation Value for Trading Posts;Natives Tolerance value ;City XPos;City YPos;Army XPos;ArmyYPos;PortXPos;Port YPos;Manufactory XPos; Manufactory YPos;Port/sea Adjacency;Terrain x;Terrain Y;Terrain variant;Terrain x;Terrain Y;Terrain variant;Terrain x;Terrain Y;Terrain variant;Terrain x;Terrain Y;Terrain variant;Area;Region;Continent;;Extra River Desc Link 1;Extra River Desc Link 2;Extra River Desc Link 3;;Fill coord X;Fill coord Y;;;;;;;;;;;;;;;;" );
 			else
 				writer.EndRow( "Id;Name;PIW name;Religion;Culture;SizeModifier;Pashas;Climate;Ice?;Storm?;Galleys;Manpower;Income;Terrain;Mine(1) ?;MineValue;Goods;Uprgadable;CoT Historical Modifier;Difficulty for Colonization;Native Combat Strength;Ferocity;Efficiency of Natives in combat;Negotiation Value for Trading Posts;Natives Tolerance value ;City XPos;City YPos;Army XPos;ArmyYPos;PortXPos;Port YPos;Manufactory XPos; Manufactory YPos;Port/sea Adjacency;Terrain x;Terrain Y;Terrain variant;Terrain x;Terrain Y;Terrain variant;Terrain x;Terrain Y;Terrain variant;Terrain x;Terrain Y;Terrain variant;Area;Region;Continent;;Extra River Desc Link 1;Extra River Desc Link 2;Extra River Desc Link 3;;Fill coord X;Fill coord Y;;;;;;;;;;;;;;;;" );
 
-			for ( ushort i=0; i<=Province.Count; ++i ) {
+			for ( ushort i=0; i<profile.ProvinceCount; ++i ) {
 				if ( list[i] == null ) list[i] = new Province( i, "Dummy" );
 
 				list[i].WriteToCSV( writer );
@@ -105,7 +107,7 @@ namespace EU2.Data
 
 					Province item = new Province();
 					if ( !item.ReadFrom( reader ) ) break;
-					list[item.ID] = item;
+					this[item.ID] = item;
 				}
 			}
 
@@ -116,7 +118,7 @@ namespace EU2.Data
 			foreach ( XmlNode node in doc.GetElementsByTagName( "Province" ) ) {
 				Province item = new Province();
 				if ( !item.ReadFrom( node ) ) break;
-				list[item.ID] = item;
+				this[item.ID] = item;
 			}
 
 			return true;
@@ -126,7 +128,7 @@ namespace EU2.Data
 			writer.WriteStartDocument();
 			writer.WriteStartElement("Provinces");
 
-			for ( ushort i=0; i<=Province.Count; ++i ) {
+			for ( ushort i=0; i<profile.ProvinceCount; ++i ) {
 				if ( list[i] == null ) list[i] = new Province( i, "Dummy" );
 				list[i].WriteTo( writer );
 			}
@@ -138,16 +140,17 @@ namespace EU2.Data
 		}
 
 		public void WriteTo( Stream stream ) {
-			CSVWriter writer = new CSVWriter( stream );
+			if (ftgDocument != null) { ftgDocument.WriteTo(stream, DefinedProvinces); return; }
+            CSVWriter writer = new CSVWriter( stream );
 			WriteTo( writer );
 			writer.Flush();
 		}
 
-		public Province TerraIncognita { 
-			get { return list[0]; } 
-			set { 
+		public Province TerraIncognita {
+			get { return list[0]; }
+			set {
 				if ( value.ID != 0 ) throw new InvalidOperationException();
-				list[0] = value; 
+				list[0] = value;
 			}
 		}
 
