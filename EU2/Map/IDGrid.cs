@@ -97,8 +97,14 @@ namespace EU2.Map {
             profile=idmap.Profile;
 			Rectangle regionRect = new Rectangle( (regionx*RegionWidth)-256, (regiony*RegionHeight)-256, RegionWidth+512, RegionHeight+512 );
 			ushort[] idlist = idmap.GetIDs( regionRect.X, regionRect.Y, regionRect.Width, regionRect.Height, GetIDOptions.SkipTI, null );
-			//ushort[] idlist = idmap.GetIDs( regionx*RegionWidth, regiony*RegionHeight, RegionWidth, RegionHeight, false, false );
-			if ( idlist.Length > RegionSize ) {
+			// Capacity can change while the ID map still contains its original border markers.
+			// Filter by the defined-ID threshold, and reserve slot zero for TI before checking size.
+			int real = 0;
+			for ( int i=0; i<idlist.Length; ++i ) {
+				if ( idlist[i] < profile.ProvinceIDThreshold ) idlist[real++] = idlist[i];
+			}
+			Array.Resize( ref idlist, real );
+			if ( idlist.Length > RegionSize-1 ) {
 				if ( dontThrow ) return;
 				throw new RegionSizeOverflowException( regionRect );
 			}
@@ -108,27 +114,8 @@ namespace EU2.Map {
 			for ( int i=0; i<RegionSize; ++i ) grid[offset+i] = Province.TerraIncognitaID;
 
 			// Don't forget to sort...
-			if ( idlist.Length > 0 ) {
-				Array.Sort( idlist, new IDComparer() );
-				if ( idlist[idlist.Length-1] == profile.ProvinceCount ) {
-					ushort[] idlist2 = new ushort[idlist.Length-1];
-					Array.Copy( idlist, 0, idlist2, 0, idlist2.Length );
-					idlist = idlist2;
-				}
-			}
-
-			// Check again
-			if ( idlist.Length == 0 )
-				idlist = new ushort[] { Province.TerraIncognitaID };
-
-			// copy the list...
-			if ( idlist[0] == Province.TerraIncognitaID )
-				idlist.CopyTo( grid, offset );
-			else {
-				//Start copying at index "1" to force a TI id in the beginning.
-				if ( idlist.Length > RegionSize-1 ) throw new RegionSizeOverflowException( regionRect );  // Extra check
-				idlist.CopyTo( grid, offset+1 );
-			}
+			Array.Sort( idlist, new IDComparer() );
+			idlist.CopyTo( grid, offset+1 );
 		}
 
 		internal class IDComparer : IComparer {

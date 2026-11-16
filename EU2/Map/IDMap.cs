@@ -392,6 +392,8 @@ namespace EU2.Map
 
 				// Do "normal" adjacencies first
 				foreach (ushort pv in matrix.Neighbours(ph)) {
+					// Border markers are not provinces, even if capacity has grown since they were written.
+					if ( pv >= profile.ProvinceIDThreshold ) continue;
 					if ( ph == pv || provinces[pv].IsRiver() ) continue;
 					// Check for the threshold
 					if ( matrix[ph,pv] <= Threshold ) continue;
@@ -401,6 +403,7 @@ namespace EU2.Map
 
 				// Do "river" adjacencies next
 				foreach (ushort pv in matrix.Neighbours(ph)) {
+					if ( pv >= profile.ProvinceIDThreshold ) continue;
 					if ( ph == pv || !provinces[pv].IsRiver() ) continue;
 					// Check for the threshold
 					if ( matrix[ph,pv] <= Threshold ) continue;

@@ -9,8 +9,8 @@ namespace MapToolsVersion {
 #else
     public static class Version {
 #endif
-        public const string BuildName = "Lapu";
-        public const string BuildVersion = "2.3.0.*";
+        public const string BuildName = "Magellan FTG 0.1.0 Preview 2";
+        public const string BuildVersion = "0.1.0.2";
 
         // Version history
         // 2.0.0 - Virgenes - 16 jul 2006

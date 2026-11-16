@@ -63,6 +63,15 @@ $env:MAGELLAN_FTG_MOD = 'C:\Games\For The Glory\Mods\Gloriana_WatK4'
 
 ## Verification and current limits
 
+Preview 2 fixes border markers becoming province neighbours during PSD import and
+incorrectly overflowing the native ID grid after province capacity changes. Defined
+high province IDs remain supported; the limit of 255 non-TI IDs per region still applies.
+The tools now identify themselves as Magellan FTG 0.1.0 Preview 2 (assembly version
+0.1.0.2). The Release build passed 26 checks, including a WatK4 river PSD import
+with adjacency regeneration followed by native injection. The new marker regression
+also reproduces the failure in the Preview 1 library. See [CHANGELOG.md](CHANGELOG.md)
+for regression coverage and recovery notes.
+
 Earlier integration runs passed 20 checks, including native text preservation, extraction, three-lightmap migration, high-ID native/PSD roundtrips and CLI workflows. Those checks are not a claim of complete engine compatibility at 10000 provinces.
 
 On 13 November 2026 the user reported loading an FTG test scenario containing 144 added 16 x 16 provinces, IDs 2020-2163, and seeing the new island in game. A previous crash while starting that scenario remains unexplained. This release is a preview; the full province range has not been validated in game.
@@ -75,4 +84,4 @@ Upstream base: Inferis/Magellan commit `f0abbda480906658fad0073d337c2dfe8dea5422
 
 Some missing libraries were restored from an existing local tree identifying itself as decompiled Magellan 2.4.0 and adapted to the upstream core. This does not establish binary equivalence to the original distribution. See [restoration-manifest.json](restoration-manifest.json) for provenance and source hashes, and [ftg-codec-evidence.json](ftg-codec-evidence.json) for the static codec findings.
 
-The tools ZIP contains rebuilt tools, runtime dependencies and documentation. It does not contain FTG.exe, game map files, the Gloriana mod or a game installer. Some application version strings retain the upstream Magellan version; the GitHub release tag identifies the FTG fork release.
+The tools ZIP contains rebuilt tools, runtime dependencies and documentation. It does not contain FTG.exe, game map files, the Gloriana mod or a game installer. Library version numbers may retain their upstream values; the tool banners and GitHub release tag identify the FTG fork release.

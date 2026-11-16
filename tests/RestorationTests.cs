@@ -22,6 +22,7 @@ class RestorationTests {
     static int Main(string[] args) {
         try {
             if (args.Length > 0 && args[0] == "--benchmark") { Benchmark(); return 0; }
+            if (args.Length > 0 && args[0] == "--border-markers") { BorderMarkers(); return 0; }
             repository = Path.GetFullPath(args[0]);
             output = Path.Combine(repository, "artifacts", "tests", DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + "-" + Guid.NewGuid().ToString("N").Substring(0, 6));
             Directory.CreateDirectory(output);
@@ -34,7 +35,9 @@ class RestorationTests {
             Run("truncated block fails instead of hanging", TruncatedBlock);
             Run("failed project save preserves the previous file", FailedSave);
             Run("256 block owners survive compression; overflow is rejected", CodecOwners);
+            BorderMarkers();
             passed += FtgIntegrationTests.Run(repository,output);
+            Run("WatK4 river PSD regeneration and minject preserve province capacity", RiverImportAndInject);
             Run("WatK4 migration to 10000 preserves every decoded block", HighProvinceMigration);
             Run("province ID 9999 survives native and PSD roundtrip", HighProvincePainting);
             Run("mprovince TXT and mextract FTG command-line workflow", FtgCommandLine);
@@ -129,6 +132,112 @@ class RestorationTests {
     }
 
     static string Quote(string value) { return "\"" + value + "\""; }
+
+    static void BorderMarkers() {
+        Run("border markers never become river or land neighbours", MarkerAdjacency);
+        Run("255 real IDs fit beside current, stale and outline markers", MarkerGrid);
+        Run("defined high IDs remain valid in grids and adjacency", HighIDAdjacency);
+        Run("256 real IDs overflow; forced build leaves the previous region intact", GridOverflow);
+        Run("empty and marker-only regions contain only TI", EmptyGrid);
+    }
+
+    static IDMap TestIDMap(MapProfile profile, int[] pixels, int width, int height) {
+        IDMap map=new IDMap(); map.Profile=profile;
+        map.ImportBitmapBuffer(100,100,width,height,pixels);
+        return map;
+    }
+    static void MarkerAdjacency() {
+        foreach(bool river in new bool[] { false,true }) foreach(int capacity in new int[] {2020,2021}) {
+            MapProfile profile=new MapProfile(capacity,true); profile.SetDefinedProvinceCount(2020);
+            ProvinceList provinces=new ProvinceList(profile);
+            provinces[2001].Terrain=river ? EU2.Enums.Terrain.River : EU2.Enums.Terrain.Plains;
+            int[] pixels=new int[64*64];
+            for(int y=0;y<64;y++) for(int x=0;x<64;x++) pixels[y*64+x]=x<32 ? 2001 : 2020;
+            IDMap map=TestIDMap(profile,pixels,64,64);
+            AdjacencyTable table=map.BuildAdjacencyTable(new Rectangle(100,100,64,64),provinces);
+            Check(!table.IsAdjacent(2001,2020),"Border marker became a neighbour");
+            Check(profile.ProvinceCount==capacity && profile.ProvinceIDThreshold==2020,"Adjacency changed the map profile");
+        }
+    }
+    static IDMap DenseIDMap(MapProfile profile,int count,params int[] markers) {
+        int[] pixels=new int[count+markers.Length];
+        for(int i=0;i<count;i++) pixels[i]=i+1;
+        Array.Copy(markers,0,pixels,count,markers.Length);
+        return TestIDMap(profile,pixels,pixels.Length,1);
+    }
+    static void MarkerGrid() {
+        foreach(int capacity in new int[] {2020,2021,10000}) {
+            MapProfile profile=new MapProfile(capacity,true); profile.SetDefinedProvinceCount(2020);
+            IDMap map=DenseIDMap(profile,255,2020,2021);
+            IDGrid grid=new IDGrid(); grid.BuildRegion(0,0,map);
+            ushort[] ids=grid.GetIDs(0,0);
+            for(int i=0;i<256;i++) Check(ids[i]==i,"Grid lost a real ID or retained a marker");
+            Check(profile.ProvinceCount==capacity,"Grid changed capacity");
+        }
+    }
+    static void HighIDAdjacency() {
+        MapProfile profile=new MapProfile(10000,true);
+        ProvinceList provinces=new ProvinceList(profile);
+        provinces[2020].Terrain=EU2.Enums.Terrain.Plains;
+        provinces[9999].Terrain=EU2.Enums.Terrain.River;
+        int[] pixels=new int[64*64];
+        for(int y=0;y<64;y++) for(int x=0;x<64;x++) pixels[y*64+x]=x<32 ? 2020 : 9999;
+        IDMap map=TestIDMap(profile,pixels,64,64);
+        AdjacencyTable table=map.BuildAdjacencyTable(new Rectangle(100,100,64,64),provinces);
+        Check(table.IsAdjacent(2020,9999) && table.IsAdjacent(9999,2020),"High-ID river adjacency was removed");
+        IDGrid grid=new IDGrid(); grid.BuildRegion(0,0,map);
+        Check(grid.IsInRegion(2020,0,0) && grid.IsInRegion(9999,0,0),"Defined high IDs were filtered from grid");
+    }
+    static void GridOverflow() {
+        MapProfile profile=new MapProfile(2020,true);
+        IDGrid grid=new IDGrid(); grid.BuildRegion(0,0,DenseIDMap(profile,255));
+        string before=Hash(Bytes(grid));
+        IDMap overflow=DenseIDMap(profile,256,2020);
+        bool rejected=false;
+        try { grid.BuildRegion(0,0,overflow); } catch(EU2.RegionSizeOverflowException) { rejected=true; }
+        Check(rejected,"256 real IDs were accepted");
+        Check(before==Hash(Bytes(grid)),"Failed build modified the region");
+        grid.BuildRegion(0,0,overflow,true);
+        Check(before==Hash(Bytes(grid)),"Forced overflow modified the region");
+    }
+    static void EmptyGrid() {
+        MapProfile profile=new MapProfile(2020,true);
+        foreach(int marker in new int[] {0,2020}) {
+            IDGrid grid=new IDGrid(); grid.BuildRegion(0,0,DenseIDMap(profile,1));
+            grid.BuildRegion(0,0,TestIDMap(profile,new int[] {marker},1,1));
+            foreach(ushort id in grid.GetIDs(0,0)) Check(id==0,"Empty region retained an ID");
+        }
+    }
+
+    static void RiverImportAndInject() {
+        MapFile map=MapFile.FromFile(Path.Combine(output,"watk4.eu2map"));
+        Rectangle bounds=map.BoundBoxes[2001].Box;
+        Point river=Point.Empty;
+        bool found=false;
+        for(int y=Math.Max(0,bounds.Top); y<Math.Min(Lightmap.BaseHeight,bounds.Bottom) && !found; y++) {
+            ushort[] row=map.IDMap.ExportBitmapBuffer(0,y,Lightmap.BaseWidth,1);
+            for(int x=0;x<row.Length;x++) if(row[x]==2001) { river=new Point(x,y); found=true; break; }
+        }
+        Check(found,"WatK4 river 2001 is absent from ID map");
+        Rectangle tile=new Rectangle((river.X/32)*32,(river.Y/32)*32,32,32);
+        string path=Path.Combine(output,"watk4-river.eu2map"), psd=Path.Combine(output,"watk4-river.psd");
+        map.WriteTo(path);
+        Tool("mimage.exe","/E "+Quote(path)+" "+Quote(psd)+" /R:"+tile.X+","+tile.Y+",32,32 /O");
+        string import=Tool("mimage.exe","/I "+Quote(psd)+" "+Quote(path)+" /G:2");
+        Check(import.Contains("Import successful"),"PSD regeneration did not finish: "+import);
+        MapFile restored=MapFile.FromFile(path);
+        Check(restored.Profile.ProvinceCount==2020 && restored.Profile.ProvinceIDThreshold==2020,"River PSD import changed capacity");
+        Check(!restored.AdjacencyTable.IsAdjacent(2001,2020),"River import stored a border neighbour");
+        string native=Path.Combine(output,"native-river"); Directory.CreateDirectory(native);
+        string inject=Tool("minject.exe",Quote(path)+" /D:"+Quote(native));
+        Check(inject.Contains("Injection successful"),"Native injection did not finish: "+inject);
+        IFile direct=new EU2Proxy(); direct.ReadFrom(native);
+        Check(((MapFile)direct).Profile.ProvinceCount==2020,"Native export changed capacity");
+        Check(direct.IDMap[river.X,river.Y]==restored.IDMap[river.X,river.Y],"Native river ownership changed");
+        string defines=DiskFile.ReadAllText(Path.Combine(native,"Db","defines.txt"));
+        Check(System.Text.RegularExpressions.Regex.IsMatch(defines,@"(?m)^\s*_MAP_MAX_PROVINCES_\s*=\s*2020\b"),"Native capacity define changed");
+    }
+
     static string Tool(string executable, string arguments) {
         string bin = Path.Combine(repository,"artifacts","bin", "Debug");
         string configuration = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar)).Name;
